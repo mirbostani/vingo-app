@@ -12,6 +12,16 @@ import 'package:vingo/util/platform.dart' as Vingo;
 import 'package:vingo/util/date_time.dart' as Vingo;
 import 'package:vingo/util/string.dart' as Vingo;
 
+////////////////////////////////////////////////////////////////////////////////
+
+enum OrderType {
+  NONE,
+  ASCENDING,
+  DESCENDING,
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 class SqliteUtil {
   static Map<String, SqliteUtil> _instances = <String, SqliteUtil>{};
   static const String defaultDatabaseName = "vingo.db";
@@ -89,18 +99,18 @@ class SqliteUtil {
     batch.execute("""
     CREATE TABLE IF NOT EXISTS cards (
       id INTEGER PRIMARY KEY AUTOINCREMENT, 
-      deck_id INTEGER NOT NULL,
-      front TEXT,
+      front TEXT NOT NULL,
       back TEXT,
       attachment TEXT,
-      sort_id INTEGER,
-      iteration INTEGER,
-      interval REAL,
-      easiness_factor REAL,
-      due_at INTEGER,
+      deck_id INTEGER NOT NULL,
+      sort_id INTEGER NOT NULL,
+      iteration INTEGER NOT NULL,
+      interval REAL NOT NULL,
+      easiness_factor REAL NOT NULL,
+      due_at INTEGER NOT NULL,
       tag TEXT,
-      updated_at INTEGER,
-      created_at INTEGER
+      updated_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL
       )          
     """);
 
@@ -213,10 +223,9 @@ class DeckList {
     this.hasMore = false,
   });
 
-  DeckList.fromMaps(List<Map<String, dynamic>> maps) 
-  : decks = const <Deck>[], 
-  hasMore = false
-  {
+  DeckList.fromMaps(List<Map<String, dynamic>> maps)
+      : decks = const <Deck>[],
+        hasMore = false {
     for (var map in maps) {
       Deck deck = Deck.fromMap(map);
       decks.add(deck);
@@ -265,6 +274,10 @@ class Deck {
     }""";
   }
 
+  factory Deck.fromDeck(Deck deck) {
+    return Deck.fromMap(deck.toMap());
+  }
+
   Deck.fromMap(Map<String, dynamic> map)
       : id = map["id"],
         name = map["name"],
@@ -282,6 +295,16 @@ class Deck {
       "color_id": colorId,
       "settings": validateSettings(settings),
     };
+  }
+
+  Deck fromDeck(Deck deck) {
+    this.id = deck.id;
+    this.name = deck.name;
+    this.parentId = deck.parentId;
+    this.sortId = deck.sortId;
+    this.colorId = deck.colorId;
+    this.settings = deck.settings;
+    return this;
   }
 
   //----------------------------------------------------------------------------
@@ -441,6 +464,31 @@ class Deck {
     return deckId;
   }
 
+  Future<int> update({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    return await Deck.updateDeck(deck: this, databaseName: databaseName);
+  }
+
+  Future<int> delete({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    if (this.id == null) return -1;
+    return await Deck.deleteDeck(deckId: this.id!, databaseName: databaseName);
+  }
+
+  Future<void> select({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    if (this.id == null) return;
+    Deck? deck = await Deck.selectDeck(
+      deckId: this.id!,
+      databaseName: databaseName,
+    );
+    if (deck == null) return;
+    this.fromDeck(deck);
+  }
+
   //----------------------------------------------------------------------------
 
   void setSettings(Map<String, dynamic> map) {
@@ -486,6 +534,166 @@ class Deck {
 
 class Card {
   static final String tableName = "cards";
+  int? id;
+  String front;
+  String? back;
+  int deckId;
+
+  /// Card attachments
+  Map<String, dynamic>? attachment;
+  static const String defaultAttachment = "{}";
+
+  /// Sort cards based on an id
+  int? sortId;
+  static const int defaultSortId = -1;
+
+  /// Iteration (or n) is a counter which starts from 1 to n.
+  /// I(1) = 1
+  /// I(2) = 6
+  /// I(n):=I(n-1)*EF
+  int? iteration;
+
+  /// First iteration (n = 1)
+  /// I(n) = I(1) = 1 day
+  static const int iteration1 = 1;
+
+  /// Interval between the previous and the next repetition (in days) starts
+  /// from I(1) which means next interval for repetition is in 1 day. The next
+  /// interval after the first one will be I(2) which is in 6 days and so on.
+  /// I(1) = 1
+  /// I(2) = 6
+  /// I(n):=I(n-1)*EF
+  double? interval; // I(n)
+  static const double interval1 = 1.0; // I(1)
+  static const double interval2 = 6.0; // I(2)
+
+  /// Easiness factor. Entry (default) value is 2.5.
+  /// EF':=EF+(0.1-(5-q)*(0.08+(5-q)*0.02))
+  double? easinessFactor;
+
+  /// Default entry value for easiness factor.
+  static const easinessFactorEntryValue = 2.5;
+
+  /// Minimum possible value for easiness factor. Easiness factor should always
+  /// be greater than 1.3 (hardest).
+  static const double easinessFactorMin = 1.3;
+
+  /// Maximum possible value for easiness quality.
+  /// 5 - perfect response
+  /// 4 - correct response after a hesitation
+  /// 3 - correct response recalled with serious difficulty
+  /// 2 - incorrect response; where the correct on seemed easy to recall
+  /// 1 - incorrect response; the correct one remembered
+  /// 0 - complete blackout
+  static const int easinessQualityMax = 5;
+
+  /// Card's due in seconds since epoch.
+  int? dueAt;
+
+  /// New/Learning/Review cards' default values.
+  /// new = 0
+  /// learning = -1
+  /// 0 < review < now
+  static const int dueAtNew = 0;
+  static const int dueAtLearning = -1;
+
+  // Card's creation and update date time in seconds since epoch.
+  int? updatedAt;
+  int? createdAt;
+
+  int get dueInSeconds {
+    if (dueAt == null) return dueAtNew;
+    return (dueAt! - Vingo.DateTimeUtil.getSecondsSinceEpoch());
+  }
+
+  int get dueInMinutes {
+    return dueInSeconds ~/ 60;
+  }
+
+  int get dueInHours {
+    return dueInSeconds ~/ (60 * 60);
+  }
+
+  int get dueInDays {
+    return dueInSeconds ~/ (60 * 60 * 24);
+  }
+
+  Card({
+    this.id,
+    required this.front,
+    this.back,
+    this.attachment,
+    required this.deckId,
+    int? sortId,
+    int? iteration,
+    double? interval,
+    double? easinessFactor,
+    int? dueAt,
+    int? updatedAt,
+    int? createdAt,
+  })  : this.sortId = sortId ?? defaultSortId,
+        this.iteration = iteration ?? iteration1,
+        this.interval = interval ?? interval1,
+        this.easinessFactor = easinessFactor ?? easinessFactorEntryValue,
+        this.dueAt = dueAt ?? dueAtNew,
+        this.updatedAt = updatedAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch(),
+        this.createdAt = createdAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch();
+
+  static Future<Card> fromMap(Map<String, dynamic> map) async {
+    Map<String, dynamic> attachment = Convert.json.decode(map["attachment"]);
+
+    return new Card(
+      id: map["id"],
+      front: map["front"],
+      back: map["back"],
+      attachment: attachment,
+      deckId: map["deck_id"],
+      sortId: map["sort_id"],
+      iteration: map["iteration"],
+      interval: map["interval"],
+      easinessFactor: map["easiness_factor"],
+      dueAt: map["due_at"],
+      updatedAt: map["updated_at"],
+      createdAt: map["created_at"],
+    );
+  }
+
+  Future<Map<String, dynamic>> toMap() async {
+    String attachmentJson =
+        Convert.json.encode(attachment ?? defaultAttachment);
+
+    return {
+      "id": id,
+      "front": front,
+      "back": back,
+      "attachment": attachmentJson,
+      "deckId": deckId,
+      "sortId": sortId ?? defaultSortId,
+      "iteration": iteration ?? iteration1,
+      "interval": interval ?? interval,
+      "easiness_factor": easinessFactor ?? easinessFactorEntryValue,
+      "due_at": dueAt ?? dueAtNew,
+      "updated_at": updatedAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch(),
+      "created_at": createdAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch(),
+    };
+  }
+
+  //----------------------------------------------------------------------------
+
+  static Future<int> deleteCard({
+    required int cardId,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("Deleting card: cardId=$cardId");
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    return await db.delete(
+      tableName,
+      where: "id=?",
+      whereArgs: [cardId],
+    );
+  }
 
   static Future<int> deleteCards({
     required int deckId,
@@ -503,10 +711,3 @@ class Card {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-enum OrderType {
-  NONE,
-  ASCENDING,
-  DESCENDING,
-}
