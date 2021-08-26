@@ -45,10 +45,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "large": MessageLookupByLibrary.simpleMessage("Large"),
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "add": MessageLookupByLibrary.simpleMessage("Add"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
+        "deck": MessageLookupByLibrary.simpleMessage("Deck"),
+        "decks": MessageLookupByLibrary.simpleMessage("Decks"),
+        "deckName": MessageLookupByLibrary.simpleMessage("Deck name"),
+        "card": MessageLookupByLibrary.simpleMessage("card"),
+        "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
       };
 }

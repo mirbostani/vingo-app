@@ -17,7 +17,7 @@ class ThemeUtil {
   static const double borderRadiusHalf = borderRadius * 0.5;
   static const double borderRadiusDouble = borderRadius * 2.0;
 
-  static const double padding = 16.0;
+  static const double padding = 12.0;
   static const double paddingQuarter = padding * 0.25;
   static const double paddingHalf = padding * 0.5;
   static const double paddingDouble = padding * 2.0;
@@ -100,6 +100,24 @@ class ThemeUtil {
   static Color lightRadioActiveColor = lightPrimaryColor;
   static Color darkRadioActiveColor = darkPrimaryAccentColor;
 
+  // FAB Colors
+  static Color lightFabBackgroundColor = lightPrimaryColor;
+  static Color darkFabBackgroundColor = darkPrimaryColor;
+  static Color lightFabIconColor = Colors.white;
+  static Color darkFabIconColor = Colors.white;
+
+  // FAB Secondary Colors
+  static Color lightFabSecondaryBackgroundColor = lightSecondaryColor;
+  static Color darkFabSecondaryBackgroundColor = darkSecondaryColor;
+  static Color ligthFabSecondaryIconColor = Colors.white;
+  static Color darkFabSecondaryIconColor = Colors.white;
+
+  // FAB Alternative Colors
+  static Color lightFabAltBackgroundColor = Colors.grey[50]!;
+  static Color darkFabAltBackgroundColor = Colors.grey[700]!;
+  static Color lightFabAltIconColor = lightPrimaryColor;
+  static Color darkFabAltIconColor = darkPrimaryAccentColor;
+
   // Flat Button Primary Colors
   static Color lightButtonPrimaryColor = lightPrimaryColor;
   static Color darkButtonPrimaryColor = darkPrimaryColor;
@@ -139,6 +157,22 @@ class ThemeUtil {
   // static Color lightButtonMutedColor = lightTextMutedColor;
   // static Color darkButtonMutedColor = darkTextMutedColor;
 
+  // Input Colors
+  static Color lightInputCursorColor = tealColor;
+  static Color darkInputCursorColor = Colors.white;
+  static Color lightInputFillColor = lightPrimaryColor.withAlpha(10);
+  static Color darkInputFillColor = Colors.grey[700]!;
+  static Color lightInputFocusColor = Colors.white;
+  static Color darkInputFocusColor = Colors.grey[700]!;
+  static Color lightInputHoverColor = lightPrimaryColor.withAlpha(10);
+  static Color darkInputHoverColor = Colors.grey[700]!;
+  static Color lightInputBorderColor = lightPrimaryColor.withAlpha(30);
+  static Color darkInputBorderColor = Colors.transparent;
+  static Color lightInputFocusedBorderColor = lightPrimaryColor.withAlpha(150);
+  static Color darkInputFocusedBorderColor = lightPrimaryColor.withAlpha(150);
+  static Color lightInputBoxShadowColor = Colors.grey.withOpacity(0.1);
+  static Color darkInputBoxShadowColor = Colors.black.withOpacity(0.1);
+
   // Progress Indicator Colors
   static Color lightProgressIndicatorBackgroundColor = Colors.grey[50]!;
   static Color darkProgressIndicatorBackgroundColor = Colors.grey[700]!;
@@ -150,6 +184,22 @@ class ThemeUtil {
   static Color darkRefreshIndicatorBackgroundColor = blackLightColor;
   static Color lightRefreshIndicatorColor = lightPrimaryColor;
   static Color darkRefreshIndicatorColor = darkPrimaryAccentColor;
+
+  // ListView Colors
+  static Color lightListViewBackgroundColor = Colors.grey[200]!;
+  static Color darkListViewBackgroundColor = Colors.grey[800]!;
+  static Color lightListViewPrimaryTextColor = lightPrimaryColor;
+  static Color darkListViewPrimaryTextColor = darkPrimaryAccentColor;
+  static Color lightListViewMutedTextColor = lightTextMutedColor;
+  static Color darkListViewMutedTextColor = darkTextMutedColor;
+
+  // Checkbox
+  static Color lightCheckboxActiveColor = lightPrimaryColor;
+  static Color darkCheckboxActiveColor = darkPrimaryColor;
+
+  // Switch
+  static Color lightSwitchActiveColor = lightPrimaryColor;
+  static Color darkSwitchActiveColor = darkPrimaryColor;
 
   //----------------------------------------------------------------------------
 
@@ -310,7 +360,7 @@ class ThemeUtil {
 
   //----------------------------------------------------------------------------
 
-  // Background Colors
+  // General Colors
 
   Color get backgroundColor => getColor(
         lightBackgroundColor,
@@ -324,6 +374,21 @@ class ThemeUtil {
         lightDialogBackgroundColor,
         darkDialogBackgroundColor,
       );
+
+  // ListView Colors
+
+  Color get listViewBackgroundColor => getColor(
+        lightListViewBackgroundColor,
+        darkListViewBackgroundColor,
+      );
+  Color get listViewPrimaryTextColor => getColor(
+        lightListViewPrimaryTextColor,
+        darkListViewPrimaryTextColor,
+      );
+  Color get listViewMutedTextColor => getColor(
+        lightListViewMutedTextColor,
+        darkListViewMutedTextColor,
+      );      
 
   // AppBar Colors
 
@@ -374,6 +439,36 @@ class ThemeUtil {
         lightProgressIndicatorValueColor,
       );
 
+  // FAB Colors
+
+  Color get fabBackgroundColor => getColor(
+        lightFabBackgroundColor,
+        darkFabBackgroundColor,
+      );
+
+  Color get fabIconColor => getColor(
+        lightFabIconColor,
+        darkFabIconColor,
+      );
+
+  Color get fabSecondaryBackgroundColor => getColor(
+        lightFabSecondaryBackgroundColor,
+        darkFabSecondaryBackgroundColor,
+      );
+  Color get fabSecondaryIconColor => getColor(
+        ligthFabSecondaryIconColor,
+        darkFabSecondaryIconColor,
+      );
+
+  Color get fabAltBackgroundColor => getColor(
+        lightFabAltBackgroundColor,
+        darkFabAltBackgroundColor,
+      );
+  Color get fabAltIconColor => getColor(
+        lightFabAltIconColor,
+        darkFabAltIconColor,
+      );
+
   // Button Colors
 
   Color get buttonTextColor => getColor(
@@ -419,5 +514,48 @@ class ThemeUtil {
   Color get buttonSecondaryProgressIndicatorValueColor => getColor(
         lightButtonSecondaryProgressIndicatorValueColor,
         darkButtonSecondaryProgressIndicatorValueColor,
+      );
+
+  // Input Colors
+
+  Color get inputCursorColor => getColor(
+        lightInputCursorColor,
+        darkInputCursorColor,
+      );
+  Color get inputFillColor => getColor(
+        lightInputFillColor,
+        darkInputFillColor,
+      );
+  Color get inputFocusColor => getColor(
+        lightInputFocusColor,
+        darkInputFocusColor,
+      );
+  Color get inputHoverColor => getColor(
+        lightInputHoverColor,
+        darkInputHoverColor,
+      );
+  Color get inputBorderColor => getColor(
+        lightInputBorderColor,
+        darkInputBorderColor,
+      );
+  Color get inputFocusedBorderColor => getColor(
+        lightInputFocusedBorderColor,
+        darkInputFocusedBorderColor,
+      );
+  Color get inputBoxShadowColor => getColor(
+        lightInputBoxShadowColor,
+        darkInputBoxShadowColor,
+      );
+
+  // Checkbox & Switch Colors
+
+  Color get checkboxActiveColor => getColor(
+        lightCheckboxActiveColor,
+        darkCheckboxActiveColor,
+      );
+
+  Color get switchActiveColor => getColor(
+        lightSwitchActiveColor,
+        darkSwitchActiveColor,
       );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vingo/page/home.dart' as Vingo;
+import 'package:vingo/page/decks.dart' as Vingo;
 import 'package:vingo/page/settings.dart' as Vingo;
 import 'package:vingo/widget/android_drawer.dart' as Vingo;
 import 'package:vingo/util/localizations.dart' as Vingo;
@@ -24,6 +25,7 @@ void main() async {
 
 class PageRoutes {
   static const String home = Vingo.HomePage.route;
+  static const String decks = Vingo.DecksPage.route;
   static const String settings = Vingo.SettingsPage.route;
 }
 
@@ -98,6 +100,9 @@ class _VingoAppState extends State<VingoApp> {
         ),
         routes: {
           PageRoutes.home: (context) => Vingo.HomePage(
+                androidDrawer: Vingo.AndroidDrawer(),
+              ),
+          PageRoutes.decks: (context) => Vingo.DecksPage(
                 androidDrawer: Vingo.AndroidDrawer(),
               ),
           PageRoutes.settings: (context) => Vingo.SettingsPage(

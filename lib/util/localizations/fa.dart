@@ -46,10 +46,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "large": MessageLookupByLibrary.simpleMessage("بزرگ"),
         "ok": MessageLookupByLibrary.simpleMessage("تایید"),
         "cancel": MessageLookupByLibrary.simpleMessage("لغو"),
+        "add": MessageLookupByLibrary.simpleMessage("افزودن"),
         "language": MessageLookupByLibrary.simpleMessage("زبان"),
         "theme": MessageLookupByLibrary.simpleMessage("پوسته"),
         "fontSize": MessageLookupByLibrary.simpleMessage("اندازه خط"),
         "home": MessageLookupByLibrary.simpleMessage("خانه"),
+        "deck": MessageLookupByLibrary.simpleMessage("دسته"),
+        "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
+        "deckName": MessageLookupByLibrary.simpleMessage("نام دسته"),
+        "card": MessageLookupByLibrary.simpleMessage("کارت"),
+        "cards": MessageLookupByLibrary.simpleMessage("کارت ها"),
         "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
       };
 }

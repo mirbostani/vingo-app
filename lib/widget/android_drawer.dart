@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vingo/page/home.dart' as Vingo;
+import 'package:vingo/page/decks.dart' as Vingo;
 import 'package:vingo/page/settings.dart' as Vingo;
 import 'package:vingo/widget/app_license.dart' as Vingo;
 import 'package:vingo/util/localizations.dart' as Vingo;
@@ -56,6 +57,21 @@ class _AndroidDrawerState extends State<AndroidDrawer> {
                     Vingo.HomePage.route,
                   );
                 }),
+            //------------------------------------------------------------------
+            ListTile(
+                leading: Container(
+                  height: double.infinity,
+                  child: Vingo.DecksPage.icon,
+                ),
+                title: Text(
+                  Vingo.LocalizationsUtil.of(context).decks,
+                ),
+                onTap: () {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    Vingo.DecksPage.route,
+                  );
+                }),                
             //------------------------------------------------------------------
             ListTile(
                 leading: Container(

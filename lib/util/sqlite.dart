@@ -214,26 +214,66 @@ class SqliteUtil {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class DeckList {
-  List<Deck> decks;
+class Decks {
+  List<Deck> items;
   bool hasMore;
+  bool loading = false;
+  int limit = 10;
+  int offset = 0;
+  OrderType orderBy = OrderType.ASCENDING;
+  String databaseName = SqliteUtil.defaultDatabaseName;
 
-  DeckList({
-    required this.decks,
+  Decks({
+    List<Deck>? items,
     this.hasMore = false,
-  });
+  }) : this.items = items ?? <Deck>[];
 
-  DeckList.fromMaps(List<Map<String, dynamic>> maps)
-      : decks = const <Deck>[],
+  Decks.fromMaps(List<Map<String, dynamic>> maps)
+      : items = <Deck>[],
         hasMore = false {
     for (var map in maps) {
       Deck deck = Deck.fromMap(map);
-      decks.add(deck);
+      items.add(deck);
     }
   }
 
   void removeLast() {
-    decks.removeLast();
+    items.removeLast();
+  }
+
+  Future<int> refresh() async {
+    loading = true;
+    offset = 0;
+    Decks selectedDecks = await Deck.selectDecks(
+      limit: limit,
+      offset: offset,
+      orderByName: orderBy,
+      databaseName: databaseName,
+    );
+    items = selectedDecks.items;
+    hasMore = selectedDecks.hasMore;
+    offset = items.length;
+    loading = false;
+    return selectedDecks.items.length;
+  }
+
+  Future<int> loadMore() async {
+    if (!hasMore) return 0;
+    int count = 0;
+    loading = true;
+    Decks selectedDecks = await Deck.selectDecks(
+        limit: limit,
+        offset: offset,
+        orderByName: orderBy,
+        databaseName: databaseName);
+    if (selectedDecks.items.length > 0) {
+      count = selectedDecks.items.length;
+      items.addAll(selectedDecks.items);
+      offset = items.length;
+    }
+    hasMore = selectedDecks.hasMore;
+    loading = false;
+    return count;
   }
 }
 
@@ -402,7 +442,7 @@ class Deck {
     return deck;
   }
 
-  static Future<DeckList> selectDecks({
+  static Future<Decks> selectDecks({
     String name = "",
     int limit = 50,
     int offset = 0,
@@ -442,13 +482,13 @@ class Deck {
       where: where,
     );
 
-    DeckList deckList = DeckList.fromMaps(maps);
-    deckList.hasMore = maps.length > limit;
-    if (deckList.hasMore) {
-      deckList.removeLast();
+    Decks decks = Decks.fromMaps(maps);
+    decks.hasMore = maps.length > limit;
+    if (decks.hasMore) {
+      decks.removeLast();
     }
 
-    return deckList;
+    return decks;
   }
 
   //----------------------------------------------------------------------------
@@ -710,4 +750,3 @@ class Card {
     );
   }
 }
-

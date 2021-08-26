@@ -82,6 +82,7 @@ class _RadioDialogState extends State<RadioDialog> {
           });
         },
         child: ListTile(
+          horizontalTitleGap: 0.0,
           contentPadding: EdgeInsets.zero,
           leading: Radio(
             value: k,
@@ -115,8 +116,8 @@ class _RadioDialogState extends State<RadioDialog> {
             padding: const EdgeInsets.only(
               top: Vingo.ThemeUtil.paddingHalf,
               bottom: Vingo.ThemeUtil.paddingHalf,
-              left: Vingo.ThemeUtil.paddingDouble,
-              right: Vingo.ThemeUtil.paddingDouble,
+              left: Vingo.ThemeUtil.padding,
+              right: Vingo.ThemeUtil.padding,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

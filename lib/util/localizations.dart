@@ -1,6 +1,7 @@
 import 'dart:ui' as Ui;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart' as Intl;
 import 'package:vingo/util/localizations/all.dart';
 
 /// Localizations Utility
@@ -125,11 +126,12 @@ class LocalizationsUtil {
         locale.countryCode == null || locale.countryCode!.isEmpty
             ? locale.languageCode
             : locale.toString();
-    final String canonicalLocaleName = Intl.canonicalizedLocale(localeName);
+    final String canonicalLocaleName =
+        Intl.Intl.canonicalizedLocale(localeName);
 
     return initializeMessages(canonicalLocaleName).then((_) {
       /// Sets default locale. Overrides `locale` in `Intl.message()` method.
-      Intl.defaultLocale = canonicalLocaleName;
+      Intl.Intl.defaultLocale = canonicalLocaleName;
       return LocalizationsUtil(canonicalLocaleName);
     });
   }
@@ -158,7 +160,21 @@ class LocalizationsUtil {
     if (str.length > 0) {
       str = str.substring(0, 1);
     }
-    return !Bidi.detectRtlDirectionality(str, isHtml: isHtml);
+    return !Intl.Bidi.detectRtlDirectionality(str, isHtml: isHtml);
+  }
+
+  static TextDirection textDirection(BuildContext context) {
+    return Directionality.of(context);
+  }
+
+  static TextDirection textDirectionByStr(
+    String? str, {
+    bool isHtml = true,
+  }) {
+    if (isLtrByStr(str)) {
+      return Ui.TextDirection.ltr;
+    }
+    return Ui.TextDirection.rtl;
   }
 
   static List<String> getSupportedLocalesNames() {
@@ -205,31 +221,127 @@ class LocalizationsUtil {
   /// ```dart
   /// Widget title = Text(LocalizationUtil.of(context).title);
   /// ```
-  String get title => Intl.message("Vingo", name: "title", locale: localeName);
-  String get aboutSoftware => Intl.message("A study helper application.", name: "aboutSoftware");
-  String get developedBy => Intl.message("Developed by Morteza Mirbostani", name: "developedBy");
-  String get licensedUnder1 => Intl.message("This software is licensed under", name: "licensedUnder1");
-  String get licensedUnder2 => Intl.message("GNU GPL v2.0", name: "licensedUnder2");
-  String get licensedUnder3 => Intl.message(".", name: "licensedUnder3");
-  String get sourceCodeAvail1 => Intl.message("Source code is available on", name: "sourceCodeAvail1");
-  String get sourceCodeAvail2 => Intl.message("GitHub", name: "sourceCodeAvail2");
-  String get sourceCodeAvail3 => Intl.message(".", name: "sourceCodeAvail3");
-  String get systemDefault =>
-      Intl.message("System default", name: "systemDefault");
-  String get dark => Intl.message("Dark", name: "dark");
-  String get light => Intl.message("Light", name: "light");
-  String get english => Intl.message("English", name: "english");
-  String get persian => Intl.message("Persian", name: "persian");
-  String get small => Intl.message("Small", name: "small");
-  String get medium => Intl.message("Medium", name: "medium");
-  String get large => Intl.message("Large", name: "large");
-  String get ok => Intl.message("OK", name: "ok");
-  String get cancel => Intl.message("Cancel", name: "cancel");
-  String get language => Intl.message("Language", name: "language");
-  String get theme => Intl.message("Theme", name: "theme");
-  String get fontSize => Intl.message("Font Size", name: "fontSize");
-  String get home => Intl.message("Home", name: "home");
-  String get settings => Intl.message("Settings", name: "settings");
+  String get title => Intl.Intl.message(
+        "Vingo",
+        name: "title",
+        locale: localeName,
+      );
+  String get aboutSoftware => Intl.Intl.message(
+        "A study helper application.",
+        name: "aboutSoftware",
+      );
+  String get developedBy => Intl.Intl.message(
+        "Developed by Morteza Mirbostani",
+        name: "developedBy",
+      );
+  String get licensedUnder1 => Intl.Intl.message(
+        "This software is licensed under",
+        name: "licensedUnder1",
+      );
+  String get licensedUnder2 => Intl.Intl.message(
+        "GNU GPL v2.0",
+        name: "licensedUnder2",
+      );
+  String get licensedUnder3 => Intl.Intl.message(
+        ".",
+        name: "licensedUnder3",
+      );
+  String get sourceCodeAvail1 => Intl.Intl.message(
+        "Source code is available on",
+        name: "sourceCodeAvail1",
+      );
+  String get sourceCodeAvail2 => Intl.Intl.message(
+        "GitHub",
+        name: "sourceCodeAvail2",
+      );
+  String get sourceCodeAvail3 => Intl.Intl.message(
+        ".",
+        name: "sourceCodeAvail3",
+      );
+  String get systemDefault => Intl.Intl.message(
+        "System default",
+        name: "systemDefault",
+      );
+  String get dark => Intl.Intl.message(
+        "Dark",
+        name: "dark",
+      );
+  String get light => Intl.Intl.message(
+        "Light",
+        name: "light",
+      );
+  String get english => Intl.Intl.message(
+        "English",
+        name: "english",
+      );
+  String get persian => Intl.Intl.message(
+        "Persian",
+        name: "persian",
+      );
+  String get small => Intl.Intl.message(
+        "Small",
+        name: "small",
+      );
+  String get medium => Intl.Intl.message(
+        "Medium",
+        name: "medium",
+      );
+  String get large => Intl.Intl.message(
+        "Large",
+        name: "large",
+      );
+  String get ok => Intl.Intl.message(
+        "OK",
+        name: "ok",
+      );
+  String get cancel => Intl.Intl.message(
+        "Cancel",
+        name: "cancel",
+      );
+  String get add => Intl.Intl.message(
+        "Add",
+        name: "add",
+      );
+  String get language => Intl.Intl.message(
+        "Language",
+        name: "language",
+      );
+  String get theme => Intl.Intl.message(
+        "Theme",
+        name: "theme",
+      );
+  String get fontSize => Intl.Intl.message(
+        "Font Size",
+        name: "fontSize",
+      );
+  String get home => Intl.Intl.message(
+        "Home",
+        name: "home",
+      );
+  String get deck => Intl.Intl.message(
+        "Deck",
+        name: "deck",
+      );
+  String get decks => Intl.Intl.message(
+        "Decks",
+        name: "decks",
+      );
+  String get deckName => Intl.Intl.message(
+        "Deck name",
+        name: "deckName",
+      );
+  String get card => Intl.Intl.message(
+        "Card",
+        name: "card",
+      );
+  String get cards => Intl.Intl.message(
+        "Cards",
+        name: "cards",
+      );
+  String get settings => Intl.Intl.message(
+        "Settings",
+        name: "settings",
+      );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

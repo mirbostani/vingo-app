@@ -4,6 +4,10 @@ A study helper application.
 
 ## Features
 
+### v1.0.3
+
+- Decks List
+
 ### v1.0.2
 
 - SQLite Database
