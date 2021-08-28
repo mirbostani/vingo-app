@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:vingo/util/localizations.dart' as Vingo;
 import 'package:vingo/util/theme.dart' as Vingo;
 import 'package:vingo/util/sqlite.dart' as Vingo;
+import 'package:vingo/util/platform.dart' as Vingo;
 import 'package:vingo/widget/platform.dart' as Vingo;
 import 'package:vingo/widget/input_dialog.dart' as Vingo;
+import 'package:vingo/widget/shortcuts.dart' as Vingo;
 
 class DecksPage extends StatefulWidget {
   static const String route = "/decks";
@@ -70,7 +72,7 @@ class _DecksPageState extends State<DecksPage> {
     String? deckName = await Vingo.InputDialog.show(
       context: context,
       title: Vingo.LocalizationsUtil.of(context).deckName,
-      confirmText: Vingo.LocalizationsUtil.of(context).add,
+      confirmText: Vingo.LocalizationsUtil.of(context).create,
     );
     if (deckName != null) {
       await Vingo.Deck(name: deckName).insert();
@@ -134,13 +136,19 @@ class _DecksPageState extends State<DecksPage> {
   }
 
   Widget bodyBuilder(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        decksBuilder(context),
-      ],
+    return Vingo.Shortcuts(
+      autofocus: true,
+      onNewDetected: () {
+        createDeck(context);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          decksBuilder(context),
+        ],
+      ),
     );
   }
 

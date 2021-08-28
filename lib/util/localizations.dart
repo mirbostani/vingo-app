@@ -302,6 +302,10 @@ class LocalizationsUtil {
         "Add",
         name: "add",
       );
+  String get create => Intl.Intl.message(
+        "Create",
+        name: "create",
+      );
   String get language => Intl.Intl.message(
         "Language",
         name: "language",

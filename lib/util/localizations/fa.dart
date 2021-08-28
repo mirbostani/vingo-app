@@ -47,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("تایید"),
         "cancel": MessageLookupByLibrary.simpleMessage("لغو"),
         "add": MessageLookupByLibrary.simpleMessage("افزودن"),
+        "create": MessageLookupByLibrary.simpleMessage("ساختن"),
         "language": MessageLookupByLibrary.simpleMessage("زبان"),
         "theme": MessageLookupByLibrary.simpleMessage("پوسته"),
         "fontSize": MessageLookupByLibrary.simpleMessage("اندازه خط"),

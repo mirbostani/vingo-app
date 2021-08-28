@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "create": MessageLookupByLibrary.simpleMessage("Create"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),

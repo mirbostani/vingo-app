@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vingo/util/localizations.dart' as Vingo;
 import 'package:vingo/util/theme.dart' as Vingo;
+import 'package:vingo/util/platform.dart' as Vingo;
 import 'package:vingo/widget/button.dart' as Vingo;
 import 'package:vingo/widget/input.dart' as Vingo;
+import 'package:vingo/widget/shortcuts.dart' as Vingo;
 
 class InputDialog extends StatefulWidget {
   final String title;
@@ -97,6 +99,14 @@ class _InputDialogState extends State<InputDialog> {
     super.dispose();
   }
 
+  void onConfirm(BuildContext context) {
+    Navigator.of(context).pop(currentValue);
+  }
+
+  void onDecline(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -144,20 +154,25 @@ class _InputDialogState extends State<InputDialog> {
                     // left: Vingo.ThemeUtil.padding,
                     // right: Vingo.ThemeUtil.padding,
                   ),
-                  child: Vingo.Input(
-                    autofocus: true,
-                    initialValue: currentValue,
-                    labelText: widget.labelText,
-                    keyboardType: widget.keyboardType,
-                    hintText: widget.hintText,
-                    maxLines: widget.maxLines ?? 1,
-                    maxLength: widget.maxLength,
-                    maxLengthEnforcement: widget.maxLength != null
-                        ? MaxLengthEnforcement.enforced
-                        : MaxLengthEnforcement.none,
-                    onChange: (value) {
-                      currentValue = value;
+                  child: Vingo.Shortcuts(
+                    onConfirmDetected: () {
+                      onConfirm(context);
                     },
+                    child: Vingo.Input(
+                      autofocus: true,
+                      initialValue: currentValue,
+                      labelText: widget.labelText,
+                      keyboardType: widget.keyboardType,
+                      hintText: widget.hintText,
+                      maxLines: widget.maxLines ?? 1,
+                      maxLength: widget.maxLength,
+                      maxLengthEnforcement: widget.maxLength != null
+                          ? MaxLengthEnforcement.enforced
+                          : MaxLengthEnforcement.none,
+                      onChange: (value) {
+                        currentValue = value;
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -175,7 +190,7 @@ class _InputDialogState extends State<InputDialog> {
               ? widget.declineText!.toUpperCase()
               : Vingo.LocalizationsUtil.of(context).cancel.toUpperCase(),
           onPressed: () {
-            Navigator.of(context).pop();
+            onDecline(context);
           },
         ),
         Vingo.Button(
@@ -184,7 +199,7 @@ class _InputDialogState extends State<InputDialog> {
               : Vingo.LocalizationsUtil.of(context).ok.toUpperCase(),
           type: Vingo.ButtonType.PRIMARY,
           onPressed: () {
-            Navigator.of(context).pop(currentValue);
+            onConfirm(context);
           },
         ),
       ],

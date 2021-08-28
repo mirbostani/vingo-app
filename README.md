@@ -4,6 +4,10 @@ A study helper application.
 
 ## Features
 
+### v1.0.4
+
+- Keyboard Shortcuts (Desktop)
+
 ### v1.0.3
 
 - Decks List
