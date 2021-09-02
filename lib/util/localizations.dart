@@ -322,6 +322,14 @@ class LocalizationsUtil {
         "Home",
         name: "home",
       );
+  String get help => Intl.Intl.message(
+        "Help",
+        name: "help",
+      );
+  String get close => Intl.Intl.message(
+        "Close",
+        name: "close",
+      );
   String get deck => Intl.Intl.message(
         "Deck",
         name: "deck",
@@ -345,6 +353,25 @@ class LocalizationsUtil {
   String get settings => Intl.Intl.message(
         "Settings",
         name: "settings",
+      );
+  String get createANewDeck => Intl.Intl.message(
+        "Create a new deck",
+        name: "createANewDeck",
+      );
+
+  // Shortcuts
+
+  String get helpShortcut => Intl.Intl.message(
+        "F1",
+        name: "helpShortcut",
+      );
+  String get closeShortcut => Intl.Intl.message(
+        "Esc",
+        name: "closeShortcut",
+      );
+  String get createANewDeckShortcut => Intl.Intl.message(
+        "Ctrl + N",
+        name: "createANewDeckShortcut",
       );
 }
 

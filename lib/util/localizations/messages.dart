@@ -51,11 +51,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
+        "help": MessageLookupByLibrary.simpleMessage("Help"),
+        "close": MessageLookupByLibrary.simpleMessage("Close"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
         "deckName": MessageLookupByLibrary.simpleMessage("Deck name"),
         "card": MessageLookupByLibrary.simpleMessage("card"),
         "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "createANewDeck": MessageLookupByLibrary.simpleMessage("Create a new deck"),
+
+        // Shortcuts
+        "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
+        "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
+        "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
       };
 }

@@ -4,6 +4,11 @@ A study helper application.
 
 ## Features
 
+### v1.0.5
+
+- Messenger
+- Shortcuts
+
 ### v1.0.4
 
 - Keyboard Shortcuts (Desktop)

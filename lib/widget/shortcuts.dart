@@ -9,6 +9,8 @@ class Shortcuts extends StatelessWidget {
   final FocusNode? focusNode;
   final VoidCallback? onConfirmDetected;
   final VoidCallback? onNewDetected;
+  final VoidCallback? onCloseDetected;
+  final VoidCallback? onHelpDetected;
 
   const Shortcuts({
     Key? key,
@@ -17,6 +19,8 @@ class Shortcuts extends StatelessWidget {
     this.autofocus = false,
     this.onConfirmDetected,
     this.onNewDetected,
+    this.onCloseDetected,
+    this.onHelpDetected,
   }) : super(key: key);
 
   @override
@@ -27,6 +31,8 @@ class Shortcuts extends StatelessWidget {
       shortcuts: {
         ConfirmIntent.key: ConfirmIntent(),
         NewIntent.key: NewIntent(),
+        CloseIntent.key: CloseIntent(),
+        HelpIntent.key: HelpIntent(),
       },
       actions: {
         ConfirmIntent: CallbackAction(
@@ -34,6 +40,12 @@ class Shortcuts extends StatelessWidget {
         ),
         NewIntent: CallbackAction(
           onInvoke: (intent) => onNewDetected?.call(),
+        ),
+        CloseIntent: CallbackAction(
+          onInvoke: (intent) => onCloseDetected?.call(),
+        ),
+        HelpIntent: CallbackAction(
+          onInvoke: (intent) => onHelpDetected?.call(),
         ),
       },
       child: child,
@@ -53,5 +65,17 @@ class NewIntent extends Intent {
   static LogicalKeySet key = LogicalKeySet(
     Io.Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control,
     LogicalKeyboardKey.keyN,
+  );
+}
+
+class CloseIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(
+    LogicalKeyboardKey.escape,
+  );
+}
+
+class HelpIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(
+    LogicalKeyboardKey.f1,
   );
 }

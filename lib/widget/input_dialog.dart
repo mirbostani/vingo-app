@@ -158,6 +158,9 @@ class _InputDialogState extends State<InputDialog> {
                     onConfirmDetected: () {
                       onConfirm(context);
                     },
+                    onCloseDetected: () {
+                      onDecline(context);
+                    },
                     child: Vingo.Input(
                       autofocus: true,
                       initialValue: currentValue,

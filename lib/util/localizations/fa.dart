@@ -52,11 +52,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "theme": MessageLookupByLibrary.simpleMessage("پوسته"),
         "fontSize": MessageLookupByLibrary.simpleMessage("اندازه خط"),
         "home": MessageLookupByLibrary.simpleMessage("خانه"),
+        "help": MessageLookupByLibrary.simpleMessage("راهنما"),
+        "close": MessageLookupByLibrary.simpleMessage("بستن"),
         "deck": MessageLookupByLibrary.simpleMessage("دسته"),
         "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
         "deckName": MessageLookupByLibrary.simpleMessage("نام دسته"),
         "card": MessageLookupByLibrary.simpleMessage("کارت"),
         "cards": MessageLookupByLibrary.simpleMessage("کارت ها"),
         "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
+        "createANewDeck": MessageLookupByLibrary.simpleMessage("ساخت یک دسته کارت جدید"),
+        
+        // Shortcuts
+        "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
+        "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
+        "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
       };
 }

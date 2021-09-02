@@ -8,6 +8,7 @@ import 'package:vingo/util/platform.dart' as Vingo;
 import 'package:vingo/widget/platform.dart' as Vingo;
 import 'package:vingo/widget/input_dialog.dart' as Vingo;
 import 'package:vingo/widget/shortcuts.dart' as Vingo;
+import 'package:vingo/widget/messenger.dart' as Vingo;
 
 class DecksPage extends StatefulWidget {
   static const String route = "/decks";
@@ -80,6 +81,18 @@ class _DecksPageState extends State<DecksPage> {
     }
   }
 
+  Future<void> showHelp(BuildContext context) async {
+    Vingo.Messenger.of(context).showTable(
+        title: Vingo.LocalizationsUtil.of(context).help,
+        duration: Duration(hours: 1),
+        table: [
+          [
+            Text(Vingo.LocalizationsUtil.of(context).createANewDeck),
+            Text(Vingo.LocalizationsUtil.of(context).createANewDeckShortcut),
+          ],
+        ]);
+  }
+
   //----------------------------------------------------------------------------
 
   Widget decksBuilder(BuildContext context) {
@@ -141,6 +154,12 @@ class _DecksPageState extends State<DecksPage> {
       onNewDetected: () {
         createDeck(context);
       },
+      onCloseDetected: () {
+        Vingo.Messenger.of(context).hide();
+      },
+      onHelpDetected: () {
+        showHelp(context);
+      },
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -162,7 +181,18 @@ class _DecksPageState extends State<DecksPage> {
             fontWeight: FontWeight.w800,
           ),
         ),
-        actions: [],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.help),
+            tooltip: Vingo.LocalizationsUtil.of(context).help +
+                ' (' +
+                Vingo.LocalizationsUtil.of(context).helpShortcut +
+                ')',
+            onPressed: () {
+              showHelp(context);
+            },
+          ),
+        ],
       ),
       drawer: widget.androidDrawer,
       floatingActionButton: FloatingActionButton(
@@ -172,6 +202,10 @@ class _DecksPageState extends State<DecksPage> {
           color: Vingo.ThemeUtil.of(context).fabIconColor,
           size: Vingo.ThemeUtil.fabIconSize,
         ),
+        tooltip: Vingo.LocalizationsUtil.of(context).createANewDeck +
+            ' (' +
+            Vingo.LocalizationsUtil.of(context).createANewDeckShortcut +
+            ')',
         onPressed: () {
           createDeck(context);
         },

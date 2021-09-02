@@ -6,8 +6,8 @@ class PlatformUtil {
   /// Update pubspec.yaml
   static String appName = "Vingo";
   static String packageName = "com.mirbostani.vingo";
-  static String version = "1.0.4";
-  static String buildNumber = "5";
+  static String version = "1.0.5";
+  static String buildNumber = "6";
   static String authorLink = "https://mirbostani.com";
   static String licenseLink =
       "https://github.com/mirbostani/vingo-app/blob/main/LICENSE";
