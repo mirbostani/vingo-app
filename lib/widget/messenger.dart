@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:vingo/util/theme.dart' as Vingo;
-import 'package:vingo/util/localizations.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
 
 /// Displays disposable messages using a snackbar.
 class Messenger {

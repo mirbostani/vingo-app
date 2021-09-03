@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/storage.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
 
 class ThemeUtil {
   static const String sys = "sys";
@@ -192,6 +191,12 @@ class ThemeUtil {
   static Color darkListViewPrimaryTextColor = darkPrimaryAccentColor;
   static Color lightListViewMutedTextColor = lightTextMutedColor;
   static Color darkListViewMutedTextColor = darkTextMutedColor;
+  
+  // ListTile
+  static Color lightListTileTextColor = lightPrimaryColor;
+  static Color darkListTileTextColor = darkPrimaryColor;
+  static Color lightListTileBackgroundColor = lightPrimaryColor.withAlpha(30);
+  static Color darkListTileBackgroundColor = darkPrimaryColor.withAlpha(30);
 
   // Checkbox
   static Color lightCheckboxActiveColor = lightPrimaryColor;
@@ -307,6 +312,7 @@ class ThemeUtil {
       scaffoldBackgroundColor: darkBackgroundColor,
       fontFamily: "Roboto",
       toggleableActiveColor: darkRadioActiveColor,
+      // hoverColor: Colors.transparent, // IconButton or ListTile hoverColor
       iconTheme: IconThemeData(
         color: darkIconColor,
         size: 20.0 * Vingo.StorageUtil.getTextScaleFactor(), // default: 24
@@ -337,6 +343,7 @@ class ThemeUtil {
       scaffoldBackgroundColor: lightBackgroundColor,
       fontFamily: "Roboto",
       toggleableActiveColor: lightRadioActiveColor,
+      // hoverColor: Colors.transparent, // IconButton or ListTile hoverColor
       iconTheme: IconThemeData(
         color: lightIconColor,
         size: 20.0 * Vingo.StorageUtil.getTextScaleFactor(), // default: 24
@@ -388,7 +395,18 @@ class ThemeUtil {
   Color get listViewMutedTextColor => getColor(
         lightListViewMutedTextColor,
         darkListViewMutedTextColor,
-      );      
+      ); 
+
+  // ListTile Colors
+
+  Color get listTileTextColor => getColor(
+    lightListTileTextColor,
+    darkListTileTextColor,
+  );     
+  Color get listTileBackgroundColor => getColor(
+    lightListTileBackgroundColor,
+    darkListTileBackgroundColor,
+  );
 
   // AppBar Colors
 

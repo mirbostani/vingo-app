@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart'; // kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vingo/util/theme.dart' as Vingo;
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/platform.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
 
 class StorageUtil {
   /// Shared Preferences supports Android/iOS/Web

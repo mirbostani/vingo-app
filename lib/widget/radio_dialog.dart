@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/theme.dart' as Vingo;
-import 'package:vingo/widget/button.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 class RadioDialog extends StatefulWidget {
   final String title;

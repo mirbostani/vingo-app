@@ -7,10 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as Path;
 import 'package:sqflite/sqflite.dart' as Sqflite;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart' as SqfliteFfi;
-import 'package:vingo/util/file.dart' as Vingo;
-import 'package:vingo/util/platform.dart' as Vingo;
-import 'package:vingo/util/date_time.dart' as Vingo;
-import 'package:vingo/util/string.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +164,7 @@ class SqliteUtil {
     if (Io.Platform.isLinux || Io.Platform.isMacOS || Io.Platform.isWindows) {
       SqfliteFfi.sqfliteFfiInit();
       var databaseFactoryFfi = SqfliteFfi.databaseFactoryFfi;
-      await databaseFactoryFfi.deleteDatabase(dbPath); // delete for test
+      // await databaseFactoryFfi.deleteDatabase(dbPath); // delete for test
       if (await Vingo.FileUtil.exists(dbPath)) {
         Vingo.PlatformUtil.log("Opening database: $dbPath");
         // To upgrade or downgrade the schema, you have to provide `version` as
@@ -188,7 +185,7 @@ class SqliteUtil {
       database = databaseFactoryFfi.openDatabase(dbPath, options: options);
       return;
     } else if (Io.Platform.isAndroid || Io.Platform.isIOS) {
-      await Sqflite.deleteDatabase(dbPath); // delete for test
+      // await Sqflite.deleteDatabase(dbPath); // delete for test
       if (await Sqflite.databaseExists(dbPath)) {
         Vingo.PlatformUtil.log("Opening database: $dbPath");
         database = Sqflite.openDatabase(
@@ -218,7 +215,7 @@ class Decks {
   List<Deck> items;
   bool hasMore;
   bool loading = false;
-  int limit = 10;
+  int limit = 25;
   int offset = 0;
   OrderType orderBy = OrderType.ASCENDING;
   String databaseName = SqliteUtil.defaultDatabaseName;
@@ -239,6 +236,13 @@ class Decks {
 
   void removeLast() {
     items.removeLast();
+  }
+
+  Future<void> removeAt(int index) async {
+    if (index < 0 || index >= items.length) return;
+    Deck deck = items.removeAt(index);
+    if (offset != 0) offset -= 1;
+    await deck.delete();
   }
 
   Future<int> refresh() async {
@@ -507,6 +511,7 @@ class Deck {
   Future<int> update({
     String databaseName = SqliteUtil.defaultDatabaseName,
   }) async {
+    Vingo.PlatformUtil.log("Updating deck: name=${this.name}");
     return await Deck.updateDeck(deck: this, databaseName: databaseName);
   }
 
@@ -514,6 +519,7 @@ class Deck {
     String databaseName = SqliteUtil.defaultDatabaseName,
   }) async {
     if (this.id == null) return -1;
+    Vingo.PlatformUtil.log("Deleting deck: name=${this.name}");
     return await Deck.deleteDeck(deckId: this.id!, databaseName: databaseName);
   }
 

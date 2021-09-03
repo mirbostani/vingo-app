@@ -11,6 +11,10 @@ class Shortcuts extends StatelessWidget {
   final VoidCallback? onNewDetected;
   final VoidCallback? onCloseDetected;
   final VoidCallback? onHelpDetected;
+  final VoidCallback? onNavUpDetected;
+  final VoidCallback? onNavDownDetected;
+  final VoidCallback? onNavLeftDetected;
+  final VoidCallback? onNavRightDetected;
 
   const Shortcuts({
     Key? key,
@@ -21,6 +25,10 @@ class Shortcuts extends StatelessWidget {
     this.onNewDetected,
     this.onCloseDetected,
     this.onHelpDetected,
+    this.onNavUpDetected,
+    this.onNavDownDetected,
+    this.onNavLeftDetected,
+    this.onNavRightDetected,
   }) : super(key: key);
 
   @override
@@ -47,6 +55,18 @@ class Shortcuts extends StatelessWidget {
         HelpIntent: CallbackAction(
           onInvoke: (intent) => onHelpDetected?.call(),
         ),
+        ArrowUpIntent: CallbackAction(
+          onInvoke: (intent) => onNavUpDetected?.call(),
+        ),
+        ArrowDownIntent: CallbackAction(
+          onInvoke: (intent) => onNavDownDetected?.call(),
+        ),
+        ArrowLeftIntent: CallbackAction(
+          onInvoke: (intent) => onNavLeftDetected?.call(),
+        ),
+        ArrowRightIntent: CallbackAction(
+          onInvoke: (intent) => onNavRightDetected?.call(),
+        ),
       },
       child: child,
     );
@@ -56,9 +76,7 @@ class Shortcuts extends StatelessWidget {
 ////////////////////////////////////////////////////////////////////////////////
 
 class ConfirmIntent extends Intent {
-  static LogicalKeySet key = LogicalKeySet(
-    LogicalKeyboardKey.enter,
-  );
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.enter);
 }
 
 class NewIntent extends Intent {
@@ -69,13 +87,25 @@ class NewIntent extends Intent {
 }
 
 class CloseIntent extends Intent {
-  static LogicalKeySet key = LogicalKeySet(
-    LogicalKeyboardKey.escape,
-  );
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.escape);
 }
 
 class HelpIntent extends Intent {
-  static LogicalKeySet key = LogicalKeySet(
-    LogicalKeyboardKey.f1,
-  );
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.f1);
+}
+
+class ArrowUpIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.arrowUp);
+}
+
+class ArrowDownIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.arrowDown);
+}
+
+class ArrowLeftIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.arrowLeft);
+}
+
+class ArrowRightIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.arrowRight);
 }

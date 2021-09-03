@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:vingo/widget/platform.dart' as Vingo;
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/theme.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 class HomePage extends StatefulWidget {
   static const String route = '/home';

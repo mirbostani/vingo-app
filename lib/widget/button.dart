@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vingo/util/theme.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
 
 enum ButtonType {
   NORMAL,
@@ -97,12 +97,13 @@ class Button extends StatelessWidget {
           child: TextButton(
             child: child,
             style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(
-                  Vingo.ThemeUtil.of(context).buttonPrimaryTextColor,
-                ),
-                backgroundColor: MaterialStateProperty.all(
-                  Vingo.ThemeUtil.of(context).buttonPrimaryColor,
-                )),
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonPrimaryTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+              ),
+            ),
             onPressed: _onPressed,
           ),
         );
@@ -111,12 +112,13 @@ class Button extends StatelessWidget {
           child: TextButton(
             child: child,
             style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all(
-                  Vingo.ThemeUtil.of(context).buttonSecondaryTextColor,
-                ),
-                backgroundColor: MaterialStateProperty.all(
-                  Vingo.ThemeUtil.of(context).buttonSecondaryColor,
-                )),
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonSecondaryTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonSecondaryColor,
+              ),
+            ),
             onPressed: _onPressed,
           ),
         );

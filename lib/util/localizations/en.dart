@@ -21,6 +21,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static areYouSureYouWantToDeleteX(x) =>
       "Are you sure you want to delete \"${x}\"?";
+  static pressXToCreateANewDeck(x) =>
+      "Press ${x} to create a new deck.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
@@ -33,8 +35,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "sourceCodeAvail1": MessageLookupByLibrary.simpleMessage("Source code is available on"),
         "sourceCodeAvail2": MessageLookupByLibrary.simpleMessage("GitHub"),
         "sourceCodeAvail3": MessageLookupByLibrary.simpleMessage("."),
-        "areYouSure": MessageLookupByLibrary.simpleMessage("Are you sure?"),
-        "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "systemDefault": MessageLookupByLibrary.simpleMessage("System default"),
         "dark": MessageLookupByLibrary.simpleMessage("Dark"),
         "light": MessageLookupByLibrary.simpleMessage("Light"),
@@ -47,6 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),
+        "rename": MessageLookupByLibrary.simpleMessage("Rename"),
+        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
@@ -60,6 +62,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "createANewDeck": MessageLookupByLibrary.simpleMessage("Create a new deck"),
+        "areYouSure": MessageLookupByLibrary.simpleMessage("Are you sure?"),
+        "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
+        "pressXToCreateANewDeck": pressXToCreateANewDeck,
         
         // Shortcuts
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),

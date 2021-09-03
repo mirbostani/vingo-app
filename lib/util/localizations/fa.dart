@@ -21,6 +21,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static areYouSureYouWantToDeleteX(x) =>
       "آیا مطمئن هستید که میخواهید ${x} را حذف کنید؟";
+  static pressXToCreateANewDeck(x) =>
+      "برای ساخت یک دسته کارت جدید ${x} را فشار دهید.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
@@ -33,9 +35,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "sourceCodeAvail1": MessageLookupByLibrary.simpleMessage("کد منبع در"),
         "sourceCodeAvail2": MessageLookupByLibrary.simpleMessage("GitHub"),
         "sourceCodeAvail3": MessageLookupByLibrary.simpleMessage("موجود است."),
-        "areYouSure":
-            MessageLookupByLibrary.simpleMessage("آیا اطمینان دارید؟"),
-        "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "systemDefault": MessageLookupByLibrary.simpleMessage("پیش فرض سیستم"),
         "dark": MessageLookupByLibrary.simpleMessage("تاریک"),
         "light": MessageLookupByLibrary.simpleMessage("روشن"),
@@ -48,6 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("لغو"),
         "add": MessageLookupByLibrary.simpleMessage("افزودن"),
         "create": MessageLookupByLibrary.simpleMessage("ساختن"),
+        "rename": MessageLookupByLibrary.simpleMessage("تغییر نام"),
+        "delete": MessageLookupByLibrary.simpleMessage("حذف"),
         "language": MessageLookupByLibrary.simpleMessage("زبان"),
         "theme": MessageLookupByLibrary.simpleMessage("پوسته"),
         "fontSize": MessageLookupByLibrary.simpleMessage("اندازه خط"),
@@ -61,6 +62,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "cards": MessageLookupByLibrary.simpleMessage("کارت ها"),
         "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
         "createANewDeck": MessageLookupByLibrary.simpleMessage("ساخت یک دسته کارت جدید"),
+        "areYouSure":
+            MessageLookupByLibrary.simpleMessage("آیا اطمینان دارید؟"),
+        "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
+        "pressXToCreateANewDeck": pressXToCreateANewDeck,
         
         // Shortcuts
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),

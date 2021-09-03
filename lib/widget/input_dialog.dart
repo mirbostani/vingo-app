@@ -2,12 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/theme.dart' as Vingo;
-import 'package:vingo/util/platform.dart' as Vingo;
-import 'package:vingo/widget/button.dart' as Vingo;
-import 'package:vingo/widget/input.dart' as Vingo;
-import 'package:vingo/widget/shortcuts.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 class InputDialog extends StatefulWidget {
   final String title;
@@ -117,6 +113,10 @@ class _InputDialogState extends State<InputDialog> {
       ),
       title: Text(
         widget.title,
+        style: TextStyle(
+          fontSize: Vingo.ThemeUtil.textFontSizeMedium,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       content: StatefulBuilder(
         builder: (BuildContext ctx, StateSetter setState) {

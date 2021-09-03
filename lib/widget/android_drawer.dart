@@ -1,13 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:vingo/page/home.dart' as Vingo;
-import 'package:vingo/page/decks.dart' as Vingo;
-import 'package:vingo/page/settings.dart' as Vingo;
-import 'package:vingo/widget/app_license.dart' as Vingo;
-import 'package:vingo/util/localizations.dart' as Vingo;
-import 'package:vingo/util/theme.dart' as Vingo;
-import 'package:vingo/util/platform.dart' as Vingo;
+import 'package:vingo/page/page.dart' as Vingo;
+import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 class AndroidDrawer extends StatefulWidget {
   const AndroidDrawer({Key? key}) : super(key: key);

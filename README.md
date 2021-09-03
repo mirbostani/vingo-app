@@ -4,6 +4,10 @@ A study helper application.
 
 ## Features
 
+### v1.0.6
+
+- Deck Context Menu
+
 ### v1.0.5
 
 - Messenger

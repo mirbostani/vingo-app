@@ -306,6 +306,14 @@ class LocalizationsUtil {
         "Create",
         name: "create",
       );
+  String get rename => Intl.Intl.message(
+    "Rename",
+    name: "rename",
+  );
+  String get delete => Intl.Intl.message(
+    "Delete",
+    name: "delete",
+  );
   String get language => Intl.Intl.message(
         "Language",
         name: "language",
@@ -357,6 +365,20 @@ class LocalizationsUtil {
   String get createANewDeck => Intl.Intl.message(
         "Create a new deck",
         name: "createANewDeck",
+      );
+  String get areYouSure => Intl.Intl.message(
+        "Are you sure?",
+        name: "areYouSure",
+      );      
+  String areYouSureYouWantToDeleteX(x) => Intl.Intl.message(
+        "Are you sure you want to delete \"$x\"?",
+        name: "areYouSureYouWantToDeleteX",
+        args: [x],
+      );
+  String pressXToCreateANewDeck(x) => Intl.Intl.message(
+        "Press $x to create a new deck.",
+        name: "pressXToCreateANewDeck",
+        args: [x],
       );
 
   // Shortcuts

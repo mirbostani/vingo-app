@@ -95,9 +95,9 @@ class _VingoAppState extends State<VingoApp> {
             child: child ?? Container(),
           );
         },
-        home: Vingo.HomePage(
+        home: Vingo.DecksPage(
           androidDrawer: Vingo.AndroidDrawer(),
-        ),
+        ),        
         routes: {
           PageRoutes.home: (context) => Vingo.HomePage(
                 androidDrawer: Vingo.AndroidDrawer(),
