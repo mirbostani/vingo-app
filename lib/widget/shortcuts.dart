@@ -11,6 +11,7 @@ class Shortcuts extends StatelessWidget {
   final VoidCallback? onNewDetected;
   final VoidCallback? onCloseDetected;
   final VoidCallback? onHelpDetected;
+  final VoidCallback? onSearchDetected;
   final VoidCallback? onNavUpDetected;
   final VoidCallback? onNavDownDetected;
   final VoidCallback? onNavLeftDetected;
@@ -25,6 +26,7 @@ class Shortcuts extends StatelessWidget {
     this.onNewDetected,
     this.onCloseDetected,
     this.onHelpDetected,
+    this.onSearchDetected,
     this.onNavUpDetected,
     this.onNavDownDetected,
     this.onNavLeftDetected,
@@ -41,6 +43,7 @@ class Shortcuts extends StatelessWidget {
         NewIntent.key: NewIntent(),
         CloseIntent.key: CloseIntent(),
         HelpIntent.key: HelpIntent(),
+        SearchIntent.key: SearchIntent(),
       },
       actions: {
         ConfirmIntent: CallbackAction(
@@ -54,6 +57,9 @@ class Shortcuts extends StatelessWidget {
         ),
         HelpIntent: CallbackAction(
           onInvoke: (intent) => onHelpDetected?.call(),
+        ),
+        SearchIntent: CallbackAction(
+          onInvoke: (intent) => onSearchDetected?.call(),
         ),
         ArrowUpIntent: CallbackAction(
           onInvoke: (intent) => onNavUpDetected?.call(),
@@ -92,6 +98,13 @@ class CloseIntent extends Intent {
 
 class HelpIntent extends Intent {
   static LogicalKeySet key = LogicalKeySet(LogicalKeyboardKey.f1);
+}
+
+class SearchIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(
+    Io.Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control,
+    LogicalKeyboardKey.keyF,
+  );
 }
 
 class ArrowUpIntent extends Intent {

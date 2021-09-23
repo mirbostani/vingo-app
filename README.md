@@ -4,6 +4,10 @@ A study helper application.
 
 ## Features
 
+### v1.0.7
+
+- Search Decks
+
 ### v1.0.6
 
 - Deck Context Menu

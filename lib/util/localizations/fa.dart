@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("خانه"),
         "help": MessageLookupByLibrary.simpleMessage("راهنما"),
         "close": MessageLookupByLibrary.simpleMessage("بستن"),
+        "search": MessageLookupByLibrary.simpleMessage("جستجو"),
         "deck": MessageLookupByLibrary.simpleMessage("دسته"),
         "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
         "deckName": MessageLookupByLibrary.simpleMessage("نام دسته"),
@@ -71,5 +72,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
         "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
         "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
+        "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
       };
 }

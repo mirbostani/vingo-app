@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 class Input extends StatefulWidget {
   final TextEditingController? controller;
@@ -26,6 +27,7 @@ class Input extends StatefulWidget {
   final ValueChanged<String>? onDelayedChange;
   final ValueChanged<String>? onFieldSubmitted;
   final VoidCallback? onTap;
+  final VoidCallback? onCloseDetected; // shortcut
 
   const Input({
     Key? key,
@@ -48,6 +50,7 @@ class Input extends StatefulWidget {
     this.onDelayedChange,
     this.onFieldSubmitted,
     this.onTap,
+    this.onCloseDetected,
   }) : super(key: key);
 
   @override
@@ -90,131 +93,134 @@ class _InputState extends State<Input> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          child: Directionality(
-            textDirection: getTextDirection(context),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextFormField(
-                  controller: widget.controller,
-                  focusNode: widget.focuseNode,
-                  autofocus: widget.autofocus ?? false,
-                  autocorrect: widget.autocorrect ?? false,
-                  enableSuggestions: widget.enableSuggestions ?? false,
-                  obscureText: widget.obscureText ?? false,
-                  initialValue: widget.initialValue,
-                  cursorColor: Vingo.ThemeUtil.of(context).inputCursorColor,
-                  cursorWidth: 2.0,
-                  cursorRadius: Radius.circular(2.0),
-                  style: TextStyle(
-                    fontSize: widget.fontSize ?? Vingo.ThemeUtil.textFontSize,
-                  ),
-                  decoration: InputDecoration(
-                    isDense: false,
-                    contentPadding: EdgeInsets.only(
-                      left: Vingo.ThemeUtil.padding,
-                      right: Vingo.ThemeUtil.padding,
-                      top: Vingo.ThemeUtil.padding,
-                      bottom: Vingo.ThemeUtil.padding,
+    return Vingo.Shortcuts(
+      autofocus: true,
+      onCloseDetected: () {
+        widget.onCloseDetected?.call();
+      },
+      child: Column(
+        children: [
+          Container(
+            child: Directionality(
+              textDirection: getTextDirection(context),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: widget.controller,
+                    focusNode: widget.focuseNode,
+                    autofocus: widget.autofocus ?? false,
+                    autocorrect: widget.autocorrect ?? false,
+                    enableSuggestions: widget.enableSuggestions ?? false,
+                    obscureText: widget.obscureText ?? false,
+                    initialValue: widget.initialValue,
+                    cursorColor: Vingo.ThemeUtil.of(context).inputCursorColor,
+                    cursorWidth: 2.0,
+                    cursorRadius: Radius.circular(2.0),
+                    style: TextStyle(
+                      fontSize: widget.fontSize ?? Vingo.ThemeUtil.textFontSize,
                     ),
-                    labelText: widget.labelText,
-                    hintText: widget.hintText,
-                    filled: true,
-                    fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
-                    focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
-                    hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(radius),
-                      borderSide: BorderSide(
-                        color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                        width: 0.0,
+                    decoration: InputDecoration(
+                      isDense: false,
+                      contentPadding: EdgeInsets.only(
+                        left: Vingo.ThemeUtil.padding,
+                        right: Vingo.ThemeUtil.padding,
+                        top: Vingo.ThemeUtil.padding,
+                        bottom: Vingo.ThemeUtil.padding,
+                      ),
+                      labelText: widget.labelText,
+                      hintText: widget.hintText,
+                      hintStyle: TextStyle(
+                        color: Vingo.ThemeUtil.of(context).textPrimaryColor.withAlpha(150),
+                      ),
+                      filled: true,
+                      fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
+                      focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
+                      hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                          width: 0.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color:
+                              Vingo.ThemeUtil.of(context).inputFocusedBorderColor,
+                          width: 0.0,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                          width: 0.0,
+                        ),
                       ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(radius),
-                      borderSide: BorderSide(
-                        color:
-                            Vingo.ThemeUtil.of(context).inputFocusedBorderColor,
-                        width: 0.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(radius),
-                      borderSide: BorderSide(
-                        color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                        width: 0.0,
-                      ),
-                    ),
-                  ),
-                  keyboardType: widget.keyboardType,
-                  maxLines: widget.maxLines,
-                  maxLength: widget.maxLength,
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  onChanged: (value) {
-                    var td = Vingo.LocalizationsUtil.textDirectionByStr(value);
-                    if (td != textDirection) {
-                      setState(() {
-                        textDirection = td;
-                      });
-                    }
-                    // Callback without delay
-                    if (widget.onChange != null) {
-                      widget.onChange!(value);
-                    }
-                    // Callback without delay
-                    if (widget.changeDelayInMilliseconds == null) {
-                      if (widget.onDelayedChange != null) {
-                        widget.onDelayedChange!(value);
+                    keyboardType: widget.keyboardType,
+                    maxLines: widget.maxLines,
+                    maxLength: widget.maxLength,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    onChanged: (value) {
+                      var td = Vingo.LocalizationsUtil.textDirectionByStr(value);
+                      if (td != textDirection) {
+                        setState(() {
+                          textDirection = td;
+                        });
                       }
-                    }
-                    // Callback with delay
-                    else {
-                      var callback = () {
-                        if (widget.onDelayedChange != null) {
-                          widget.onDelayedChange!(value);
+                      // Callback without delay
+                      if (widget.onChange != null) {
+                        widget.onChange!(value);
+                      }
+                      // Callback without delay
+                      if (widget.changeDelayInMilliseconds == null) {
+                        widget.onDelayedChange?.call(value);
+                      }
+                      // Callback with delay
+                      else {
+                        var callback = () {
+                          if (widget.onDelayedChange != null) {
+                            widget.onDelayedChange!(value);
+                          }
+                          changeDelayTimer = null;
+                        };
+                        if (changeDelayTimer == null) {
+                          changeDelayTimer = Async.Timer(
+                            Duration(
+                              milliseconds: widget.changeDelayInMilliseconds!,
+                            ),
+                            callback,
+                          );
                         }
-                        changeDelayTimer = null;
-                      };
-                      if (changeDelayTimer == null) {
-                        changeDelayTimer = Async.Timer(
-                          Duration(
-                            milliseconds: widget.changeDelayInMilliseconds!,
-                          ),
-                          callback,
-                        );
+                        if (changeDelayTimer != null &&
+                            changeDelayTimer!.isActive) {
+                          changeDelayTimer!.cancel();
+                          changeDelayTimer = Async.Timer(
+                            Duration(
+                              milliseconds: widget.changeDelayInMilliseconds!,
+                            ),
+                            callback,
+                          );
+                        }
                       }
-                      if (changeDelayTimer != null &&
-                          changeDelayTimer!.isActive) {
-                        changeDelayTimer!.cancel();
-                        changeDelayTimer = Async.Timer(
-                          Duration(
-                            milliseconds: widget.changeDelayInMilliseconds!,
-                          ),
-                          callback,
-                        );
-                      }
-                    }
-                  },
-                  onTap: () {
-                    if (widget.onTap != null) {
-                      widget.onTap!();
-                    }
-                  },
-                  onFieldSubmitted: (value) {
-                    if (widget.onFieldSubmitted != null) {
-                      widget.onFieldSubmitted!(value);
-                    }
-                  },
-                ),
-              ],
+                    },
+                    onTap: () {
+                      widget.onTap?.call();
+                    },
+                    onFieldSubmitted: (value) {
+                      widget.onFieldSubmitted?.call(value);
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

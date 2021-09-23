@@ -245,10 +245,13 @@ class Decks {
     await deck.delete();
   }
 
-  Future<int> refresh() async {
+  Future<int> refresh({
+    String? name,
+  }) async {
     loading = true;
     offset = 0;
     Decks selectedDecks = await Deck.selectDecks(
+      name: name ?? "",
       limit: limit,
       offset: offset,
       orderByName: orderBy,
@@ -261,11 +264,14 @@ class Decks {
     return selectedDecks.items.length;
   }
 
-  Future<int> loadMore() async {
+  Future<int> loadMore({
+    String? name,
+  }) async {
     if (!hasMore) return 0;
     int count = 0;
     loading = true;
     Decks selectedDecks = await Deck.selectDecks(
+        name: name ?? "",
         limit: limit,
         offset: offset,
         orderByName: orderBy,
@@ -462,7 +468,13 @@ class Deck {
     String? where;
     name = Vingo.StringUtil.escapeSql(name);
     if (name.isNotEmpty) {
+      // where = "";
+      // name.split(" ").forEach((el) {
+      //   where = where! + (where!.isNotEmpty ? " OR" : "") + " name LIKE '%$el%'";
+      // });
+      // where = where!.trim();
       where = "name LIKE '%$name%'";
+      print(where);
     }
 
     String? orderBy;

@@ -307,13 +307,13 @@ class LocalizationsUtil {
         name: "create",
       );
   String get rename => Intl.Intl.message(
-    "Rename",
-    name: "rename",
-  );
+        "Rename",
+        name: "rename",
+      );
   String get delete => Intl.Intl.message(
-    "Delete",
-    name: "delete",
-  );
+        "Delete",
+        name: "delete",
+      );
   String get language => Intl.Intl.message(
         "Language",
         name: "language",
@@ -337,6 +337,10 @@ class LocalizationsUtil {
   String get close => Intl.Intl.message(
         "Close",
         name: "close",
+      );
+  String get search => Intl.Intl.message(
+        "Search",
+        name: "search",
       );
   String get deck => Intl.Intl.message(
         "Deck",
@@ -369,7 +373,7 @@ class LocalizationsUtil {
   String get areYouSure => Intl.Intl.message(
         "Are you sure?",
         name: "areYouSure",
-      );      
+      );
   String areYouSureYouWantToDeleteX(x) => Intl.Intl.message(
         "Are you sure you want to delete \"$x\"?",
         name: "areYouSureYouWantToDeleteX",
@@ -382,7 +386,7 @@ class LocalizationsUtil {
       );
 
   // Shortcuts
-
+  
   String get helpShortcut => Intl.Intl.message(
         "F1",
         name: "helpShortcut",
@@ -395,6 +399,10 @@ class LocalizationsUtil {
         "Ctrl + N",
         name: "createANewDeckShortcut",
       );
+  String get searchShortcut => Intl.Intl.message(
+    "Ctrl + F",
+    name: "searchShortcut",
+  );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

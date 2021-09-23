@@ -44,6 +44,7 @@ class ThemeUtil {
   static Color blackColor = Color(0xFF333230);
   static Color blackLightColor = Colors.grey[700]!;
   static Color tealColor = Color(0xFF009898);
+  static Color tealColor10 = Color(0xFFE5F4F4);
   static Color tealLightColor = Colors.tealAccent;
   static Color tealBackgroundColor = Color(0xFF98D4D4);
   static Color redColor = Color(0xFFFF553E);
@@ -51,6 +52,7 @@ class ThemeUtil {
 
   // Primary, Accent, Secondary Colors
   static Color lightPrimaryColor = tealColor;
+  static Color lightPrimaryColor10 = tealColor10;
   static Color darkPrimaryColor = tealColor;
   static Color lightPrimaryAccentColor = tealLightColor;
   static Color darkPrimaryAccentColor = tealLightColor;
@@ -159,7 +161,8 @@ class ThemeUtil {
   // Input Colors
   static Color lightInputCursorColor = tealColor;
   static Color darkInputCursorColor = Colors.white;
-  static Color lightInputFillColor = lightPrimaryColor.withAlpha(10);
+  // static Color lightInputFillColor = lightPrimaryColor.withAlpha(10);
+  static Color lightInputFillColor = lightPrimaryColor10;
   static Color darkInputFillColor = Colors.grey[700]!;
   static Color lightInputFocusColor = Colors.white;
   static Color darkInputFocusColor = Colors.grey[700]!;

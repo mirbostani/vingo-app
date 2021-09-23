@@ -24,6 +24,12 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   late ScrollController decksScrollController;
   int selectedIndex = -1;
   double decksScrollPosition = 0.0;
+
+  bool searchEnabled = false;
+  double searchScale = 0.0;
+  late TextEditingController searchController;
+  late FocusNode searchFocusNode;
+
   bool fabEnabled = true;
   double fabScale = 1.0;
   late AnimationController fabAnimationController;
@@ -36,6 +42,9 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
 
     decksScrollController = new ScrollController()
       ..addListener(onDecksScrolled);
+
+    searchController = new TextEditingController();
+    searchFocusNode = new FocusNode();
 
     fabAnimationController = AnimationController(
       vsync: this,
@@ -54,14 +63,24 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     decksScrollController.dispose();
+
     fabAnimationController.dispose();
+
+    searchFocusNode.dispose();
+
     super.dispose();
   }
 
   //----------------------------------------------------------------------------
 
   Future<void> refreshDecks() async {
-    await decks.refresh();
+    if (searchEnabled && searchController.text.isNotEmpty) {
+      await decks.refresh(
+        name: searchController.text,
+      );
+    } else {
+      await decks.refresh();
+    }
     setState(() {
       if (decksScrollController.hasClients) {
         decksScrollController.jumpTo(0.0);
@@ -70,7 +89,12 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   }
 
   Future<void> loadMoreDecks() async {
-    int count = await decks.loadMore();
+    int count = 0;
+    if (searchEnabled && searchController.text.isNotEmpty) {
+      count = await decks.loadMore();
+    } else {
+      count = await decks.loadMore();
+    }
     if (count == 0) return;
     setState(() {});
   }
@@ -103,6 +127,10 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
     }
   }
 
+  void onSearchChanged(BuildContext context, String value) {
+    refreshDecks();
+  }
+
   Future<void> createDeck(BuildContext context) async {
     String? deckName = await Vingo.InputDialog.show(
       context: context,
@@ -121,10 +149,20 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         duration: Duration(hours: 1),
         table: [
           [
+            Text(Vingo.LocalizationsUtil.of(context).search),
+            Text(Vingo.LocalizationsUtil.of(context).searchShortcut),
+          ],
+          [
             Text(Vingo.LocalizationsUtil.of(context).createANewDeck),
             Text(Vingo.LocalizationsUtil.of(context).createANewDeckShortcut),
           ],
         ]);
+  }
+
+  Future<void> showSearch(BuildContext context) async {
+    searchEnabled = !searchEnabled;
+    if (searchEnabled) searchFocusNode.requestFocus();
+    refreshDecks();
   }
 
   void selectDeck(int index) {
@@ -197,6 +235,21 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   }
 
   //----------------------------------------------------------------------------
+
+  Widget searchBuilder(BuildContext context) {
+    return Vingo.Input(
+      focuseNode: searchFocusNode,
+      controller: searchController,
+      hintText: Vingo.LocalizationsUtil.of(context).search,
+      onCloseDetected: () {
+        showSearch(context); // toggle off
+      },
+      changeDelayInMilliseconds: 300,
+      onDelayedChange: (value) {
+        onSearchChanged(context, value);
+      },
+    );
+  }
 
   Widget decksBuilder(BuildContext context) {
     if (decks.items.length <= 0) {
@@ -281,6 +334,9 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
       onHelpDetected: () {
         showHelp(context);
       },
+      onSearchDetected: () {
+        showSearch(context);
+      },
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -295,20 +351,30 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   Widget androidBuilder(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          Vingo.LocalizationsUtil.of(context).decks,
-          style: TextStyle(
-            color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
+        title: searchEnabled
+            ? searchBuilder(context)
+            : Text(
+                Vingo.LocalizationsUtil.of(context).decks,
+                style: TextStyle(
+                  color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+        leading: searchEnabled ? Container() : null,
+        leadingWidth: searchEnabled ? 0.0 : null,
         actions: [
           IconButton(
-            icon: Icon(Icons.help),
-            tooltip: Vingo.LocalizationsUtil.of(context).help +
-                ' (' +
-                Vingo.LocalizationsUtil.of(context).helpShortcut +
-                ')',
+            icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
+            tooltip:
+                "${Vingo.LocalizationsUtil.of(context).search} (${Vingo.LocalizationsUtil.of(context).searchShortcut})",
+            onPressed: () {
+              showSearch(context);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.help_outline),
+            tooltip:
+                "${Vingo.LocalizationsUtil.of(context).help} (${Vingo.LocalizationsUtil.of(context).helpShortcut})",
             onPressed: () {
               showHelp(context);
             },

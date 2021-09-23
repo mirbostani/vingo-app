@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
+        "search": MessageLookupByLibrary.simpleMessage("Search"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
         "deckName": MessageLookupByLibrary.simpleMessage("Deck name"),
@@ -70,5 +71,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
         "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
         "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
+        "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
       };
 }
