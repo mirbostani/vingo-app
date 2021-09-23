@@ -474,7 +474,6 @@ class Deck {
       // });
       // where = where!.trim();
       where = "name LIKE '%$name%'";
-      print(where);
     }
 
     String? orderBy;
@@ -590,6 +589,89 @@ class Deck {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class Cards {
+  List<Card> items;
+  bool hasMore;
+  bool loading = false;
+  int limit = 25;
+  int offset = 0;
+  OrderType orderBy = OrderType.ASCENDING;
+  String databaseName = SqliteUtil.defaultDatabaseName;
+
+  Cards({
+    List<Card>? items,
+    this.hasMore = false,
+  }) : this.items = items ?? <Card>[];
+
+  Cards.fromMaps(List<Map<String, dynamic>> maps)
+      : items = <Card>[],
+        hasMore = false {
+    for (var map in maps) {
+      Card card = Card.fromMap(map);
+      items.add(card);
+    }
+  }
+
+  void removeLast() {
+    items.removeLast();
+  }
+
+  Future<void> removeAt(int index) async {
+    if (index < 0 || index >= items.length) return;
+    Card card = items.removeAt(index);
+    if (offset != 0) offset -= 1;
+    await card.delete();
+  }
+
+  Future<int> refresh({
+    int? deckId,
+    String? search,
+  }) async {
+    loading = true;
+    offset = 0;
+    Cards selectedCards = await Card.selectCards(
+      deckId: deckId,
+      search: search ?? "",
+      limit: limit,
+      offset: offset,
+      orderByFront: orderBy,
+      databaseName: databaseName,
+    );
+    items = selectedCards.items;
+    hasMore = selectedCards.hasMore;
+    offset = items.length;
+    loading = false;
+    return selectedCards.items.length;
+  }
+
+  Future<int> loadMore({
+    int? deckId,
+    String? search,
+  }) async {
+    if (!hasMore) return 0;
+    int count = 0;
+    loading = true;
+    Cards selectedCards = await Card.selectCards(
+      deckId: deckId,
+      search: search ?? "",
+      limit: limit,
+      offset: offset,
+      orderByFront: orderBy,
+      databaseName: databaseName,
+    );
+    if (selectedCards.items.length > 0) {
+      count = selectedCards.items.length;
+      items.addAll(selectedCards.items);
+      offset = items.length;
+    }
+    hasMore = selectedCards.hasMore;
+    loading = false;
+    return count;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 class Card {
   static final String tableName = "cards";
   int? id;
@@ -697,7 +779,43 @@ class Card {
         this.updatedAt = updatedAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch(),
         this.createdAt = createdAt ?? Vingo.DateTimeUtil.getSecondsSinceEpoch();
 
-  static Future<Card> fromMap(Map<String, dynamic> map) async {
+  factory Card.fromCard(Card card) {
+    return Card.fromMap(card.toMap());
+  }
+
+  @override
+  String toString() {
+    return """{
+      id: $id,
+      front: $front,
+      back: $back,
+      attachment: $attachment,
+      deck_id: $deckId,
+      sort_id: $sortId,
+      iteration: $iteration,
+      interval: $interval,
+      easiness_factor: $easinessFactor,
+      due_at: $dueAt,
+      updated_at: $updatedAt,
+      created_at: $createdAt,
+    }""";
+  }
+
+  Card.fromMap(Map<String, dynamic> map)
+      : id = map["id"],
+        front = map["front"],
+        back = map["back"],
+        attachment = Convert.json.decode(map["attachment"]),
+        deckId = map["deck_id"],
+        sortId = map["sort_id"],
+        iteration = map["iteration"],
+        interval = map["interval"],
+        easinessFactor = map["easiness_factor"],
+        dueAt = map["due_at"],
+        updatedAt = map["updated_at"],
+        createdAt = map["created_at"];
+
+  Future<Card> fromMap(Map<String, dynamic> map) async {
     Map<String, dynamic> attachment = Convert.json.decode(map["attachment"]);
 
     return new Card(
@@ -716,15 +834,12 @@ class Card {
     );
   }
 
-  Future<Map<String, dynamic>> toMap() async {
-    String attachmentJson =
-        Convert.json.encode(attachment ?? defaultAttachment);
-
+  Map<String, dynamic> toMap() {
     return {
       "id": id,
       "front": front,
       "back": back,
-      "attachment": attachmentJson,
+      "attachment": Convert.json.encode(attachment ?? defaultAttachment),
       "deckId": deckId,
       "sortId": sortId ?? defaultSortId,
       "iteration": iteration ?? iteration1,
@@ -736,7 +851,63 @@ class Card {
     };
   }
 
+  Card fromCard(Card card) {
+    this.id = card.id;
+    this.front = card.front;
+    this.back = card.back;
+    this.attachment = card.attachment;
+    this.deckId = card.deckId;
+    this.sortId = card.sortId;
+    this.iteration = card.iteration;
+    this.interval = card.interval;
+    this.easinessFactor = card.easinessFactor;
+    this.dueAt = card.dueAt;
+    this.updatedAt = card.updatedAt;
+    this.createdAt = card.createdAt;
+    return this;
+  }
+
   //----------------------------------------------------------------------------
+
+  static Future<int> insertCard({
+    required Card card,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("Inserting card: card=${card.toString()}");
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    card.updatedAt = Vingo.DateTimeUtil.getSecondsSinceEpoch();
+    card.createdAt = Vingo.DateTimeUtil.getSecondsSinceEpoch();
+    card.attachment!.removeWhere((key, value) {
+      return (!card.front.contains(key) && !card.back!.contains(key));
+    });
+    return await db.insert(
+      tableName,
+      card.toMap(),
+      conflictAlgorithm: Sqflite.ConflictAlgorithm.replace,
+    );
+  }
+
+  static Future<int> updateCard({
+    required Card card,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("Updating card: card=${card.toString()}");
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    card.updatedAt = Vingo.DateTimeUtil.getSecondsSinceEpoch();
+    card.attachment!.removeWhere((key, value) {
+      return (!card.front.contains(key) && !card.back!.contains(key));
+    });
+    return await db.update(
+      tableName,
+      card.toMap(),
+      where: "id=?",
+      whereArgs: [card.id],
+    );
+  }
 
   static Future<int> deleteCard({
     required int cardId,
@@ -766,5 +937,131 @@ class Card {
       where: "deck_id=?",
       whereArgs: [deckId],
     );
+  }
+
+  static Future<Card?> selectCard({
+    required int cardId,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("Selecting card: cardId=$cardId");
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: "id=?",
+      whereArgs: [cardId],
+    );
+    if (maps.length == 0) {
+      return null;
+    }
+    Card card = Card.fromMap(maps[0]);
+    return card;
+  }
+
+  static Future<Cards> selectCards({
+    int? deckId,
+    String search = "",
+    int limit = 50,
+    int offset = 0,
+    OrderType orderByFront = OrderType.ASCENDING,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("""Selecting cards: 
+    deckId=$deckId, 
+    search=$search,
+    limit=$limit,
+    offset=$offset,
+    orderByFront=$orderByFront,
+    """);
+
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+
+    String? where;
+
+    if (deckId != null && deckId >= 0) {
+      where = "deck_id=$deckId";
+    }
+
+    search = Vingo.StringUtil.escapeSql(search);
+    if (search.isNotEmpty) {
+      String w = "";
+      search.split(" ").forEach((keyword) {
+        w += (w.isNotEmpty ? " OR " : "") + "name LIKE '%$keyword%'";
+      });
+      where = where == null ? w : where + " AND ($w)";
+      // where += "name LIKE '%$search%'";
+    }
+
+    String? orderBy;
+    switch (orderByFront) {
+      case OrderType.ASCENDING:
+        orderBy = "front ASC";
+        break;
+      case OrderType.DESCENDING:
+        orderBy = "front DESC";
+        break;
+      case OrderType.NONE:
+      default:
+        break;
+    }
+
+    List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      limit: limit + 1, // +1 is used for "hasMore"
+      offset: offset,
+      orderBy: orderBy,
+      where: where,
+    );
+
+    Cards cards = Cards.fromMaps(maps);
+    cards.hasMore = maps.length > limit;
+    if (cards.hasMore) {
+      cards.removeLast();
+    }
+
+    return cards;
+  }
+
+  //----------------------------------------------------------------------------
+
+  Future<int> insert({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    int cardId = await Card.insertCard(
+      card: this,
+      databaseName: databaseName,
+    );
+    this.id = cardId;
+    return cardId;
+  }
+
+  Future<int> update({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("Updating card: card:${this.toString()}");
+    return await Card.updateCard(card: this, databaseName: databaseName);
+  }
+
+  Future<int> delete({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    if (this.id == null) return -1;
+    Vingo.PlatformUtil.log("Deleting card: id=${this.id}");
+    return await Card.deleteCard(cardId: this.id!, databaseName: databaseName);
+  }
+
+  Future<void> select({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    if (this.id == null) return;
+    Card? card = await Card.selectCard(
+      cardId: this.id!,
+      databaseName: databaseName,
+    );
+    if (card == null) return;
+    this.fromCard(card);
   }
 }

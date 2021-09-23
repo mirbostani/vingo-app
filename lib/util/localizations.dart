@@ -302,6 +302,10 @@ class LocalizationsUtil {
         "Add",
         name: "add",
       );
+  String get study => Intl.Intl.message(
+        "Study",
+        name: "study",
+      );
   String get create => Intl.Intl.message(
         "Create",
         name: "create",
@@ -338,6 +342,10 @@ class LocalizationsUtil {
         "Close",
         name: "close",
       );
+  String get more => Intl.Intl.message(
+        "More",
+        name: "more",
+      );
   String get search => Intl.Intl.message(
         "Search",
         name: "search",
@@ -370,6 +378,10 @@ class LocalizationsUtil {
         "Create a new deck",
         name: "createANewDeck",
       );
+  String get createANewCard => Intl.Intl.message(
+        "Create a new card",
+        name: "createANewCard",
+      );
   String get areYouSure => Intl.Intl.message(
         "Are you sure?",
         name: "areYouSure",
@@ -384,9 +396,14 @@ class LocalizationsUtil {
         name: "pressXToCreateANewDeck",
         args: [x],
       );
+  String pressXToCreateANewCard(x) => Intl.Intl.message(
+        "Press $x to create a new card.",
+        name: "pressXToCreateANewCard",
+        args: [x],
+      );
 
   // Shortcuts
-  
+
   String get helpShortcut => Intl.Intl.message(
         "F1",
         name: "helpShortcut",
@@ -399,10 +416,18 @@ class LocalizationsUtil {
         "Ctrl + N",
         name: "createANewDeckShortcut",
       );
+  String get createANewCardShortcut => Intl.Intl.message(
+        "Ctrl + N",
+        name: "createANewCardShortcut",
+      );
   String get searchShortcut => Intl.Intl.message(
-    "Ctrl + F",
-    name: "searchShortcut",
-  );
+        "Ctrl + F",
+        name: "searchShortcut",
+      );
+  String get studyShortcut => Intl.Intl.message(
+        "Ctrl + L",
+        name: "studyShortcut",
+      );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

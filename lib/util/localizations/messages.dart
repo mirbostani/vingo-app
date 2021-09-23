@@ -21,18 +21,22 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static areYouSureYouWantToDeleteX(x) =>
       "Are you sure you want to delete \"${x}\"?";
-  static pressXToCreateANewDeck(x) =>
-      "Press ${x} to create a new deck.";
+  static pressXToCreateANewDeck(x) => "Press ${x} to create a new deck.";
+  static pressXToCreateANewCard(x) => "Press ${x} to create a new card.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
         "title": MessageLookupByLibrary.simpleMessage("Vingo"),
-        "aboutSoftware": MessageLookupByLibrary.simpleMessage("A study helper application."),
-        "developedBy": MessageLookupByLibrary.simpleMessage("Developed by Morteza Mirbostani"),
-        "licensedUnder1": MessageLookupByLibrary.simpleMessage("This software is licensed under"),
+        "aboutSoftware":
+            MessageLookupByLibrary.simpleMessage("A study helper application."),
+        "developedBy": MessageLookupByLibrary.simpleMessage(
+            "Developed by Morteza Mirbostani"),
+        "licensedUnder1": MessageLookupByLibrary.simpleMessage(
+            "This software is licensed under"),
         "licensedUnder2": MessageLookupByLibrary.simpleMessage("GNU GPL v3.0"),
         "licensedUnder3": MessageLookupByLibrary.simpleMessage("."),
-        "sourceCodeAvail1": MessageLookupByLibrary.simpleMessage("Source code is available on"),
+        "sourceCodeAvail1":
+            MessageLookupByLibrary.simpleMessage("Source code is available on"),
         "sourceCodeAvail2": MessageLookupByLibrary.simpleMessage("GitHub"),
         "sourceCodeAvail3": MessageLookupByLibrary.simpleMessage("."),
         "systemDefault": MessageLookupByLibrary.simpleMessage("System default"),
@@ -46,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("OK"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "study": MessageLookupByLibrary.simpleMessage("Study"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -55,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
+        "more": MessageLookupByLibrary.simpleMessage("More"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
@@ -62,15 +68,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "card": MessageLookupByLibrary.simpleMessage("card"),
         "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
-        "createANewDeck": MessageLookupByLibrary.simpleMessage("Create a new deck"),
+        "createANewDeck":
+            MessageLookupByLibrary.simpleMessage("Create a new deck"),
+        "createANewCard":
+            MessageLookupByLibrary.simpleMessage("Create a new card"),
         "areYouSure": MessageLookupByLibrary.simpleMessage("Are you sure?"),
         "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "pressXToCreateANewDeck": pressXToCreateANewDeck,
+        "pressXToCreateANewCard": pressXToCreateANewCard,
 
         // Shortcuts
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
         "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
-        "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
+        "createANewDeckShortcut":
+            MessageLookupByLibrary.simpleMessage("Ctrl + N"),
+        "createANewCardShortcut":
+            MessageLookupByLibrary.simpleMessage("Ctrl + N"),
         "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
+        "studyShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + L"),
       };
 }

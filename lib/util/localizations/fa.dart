@@ -23,6 +23,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "آیا مطمئن هستید که میخواهید ${x} را حذف کنید؟";
   static pressXToCreateANewDeck(x) =>
       "برای ساخت یک دسته کارت جدید ${x} را فشار دهید.";
+  static pressXToCreateANewCard(x) =>
+      "برای ساخت یک کارت جدید ${x} را فشار دهید.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
@@ -46,6 +48,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("تایید"),
         "cancel": MessageLookupByLibrary.simpleMessage("لغو"),
         "add": MessageLookupByLibrary.simpleMessage("افزودن"),
+        "study": MessageLookupByLibrary.simpleMessage("مطالعه"),
         "create": MessageLookupByLibrary.simpleMessage("ساختن"),
         "rename": MessageLookupByLibrary.simpleMessage("تغییر نام"),
         "delete": MessageLookupByLibrary.simpleMessage("حذف"),
@@ -55,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("خانه"),
         "help": MessageLookupByLibrary.simpleMessage("راهنما"),
         "close": MessageLookupByLibrary.simpleMessage("بستن"),
+        "more": MessageLookupByLibrary.simpleMessage("بیشتر"),
         "search": MessageLookupByLibrary.simpleMessage("جستجو"),
         "deck": MessageLookupByLibrary.simpleMessage("دسته"),
         "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
@@ -63,15 +67,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "cards": MessageLookupByLibrary.simpleMessage("کارت ها"),
         "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
         "createANewDeck": MessageLookupByLibrary.simpleMessage("ساخت یک دسته کارت جدید"),
+        "createANewCard": MessageLookupByLibrary.simpleMessage("ساخت یک کارت جدید"),
         "areYouSure":
             MessageLookupByLibrary.simpleMessage("آیا اطمینان دارید؟"),
         "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "pressXToCreateANewDeck": pressXToCreateANewDeck,
+        "pressXToCreateANewCard": pressXToCreateANewCard,
         
         // Shortcuts
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
         "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
         "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
+        "createANewCardShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
         "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
+        "studyShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + L"),
       };
 }

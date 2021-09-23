@@ -36,6 +36,9 @@ class ThemeUtil {
   static const double fabIconSize = 28.0;
   static const double fabButtonHeight = 48.0;
 
+  static const double iconSizeSmall = 18.0;
+  static const double iconSizeSmallSplashRadius = 24.0;
+
   //----------------------------------------------------------------------------
 
   // Raw Colors
@@ -80,6 +83,8 @@ class ThemeUtil {
   // Icon Colors
   static Color lightIconColor = Colors.grey[300]!;
   static Color darkIconColor = Colors.grey;
+  static Color lightIconMutedColor = Colors.grey.shade400;
+  static Color darkIconMutedColor = Colors.grey.shade400;
 
   // Background Colors
   static Color lightBackgroundColor = whiteColor;
@@ -161,7 +166,6 @@ class ThemeUtil {
   // Input Colors
   static Color lightInputCursorColor = tealColor;
   static Color darkInputCursorColor = Colors.white;
-  // static Color lightInputFillColor = lightPrimaryColor.withAlpha(10);
   static Color lightInputFillColor = lightPrimaryColor10;
   static Color darkInputFillColor = Colors.grey[700]!;
   static Color lightInputFocusColor = Colors.white;
@@ -187,6 +191,11 @@ class ThemeUtil {
   static Color lightRefreshIndicatorColor = lightPrimaryColor;
   static Color darkRefreshIndicatorColor = darkPrimaryAccentColor;
 
+  static Color lightDividerColor = Colors.grey.shade200;
+  static Color darkDividerColor = Colors.grey.shade800;
+  static Color lightDividerSelectedColor = lightPrimaryColor.withAlpha(30);
+  static Color darkDividerSelectedColor = darkPrimaryColor.withAlpha(30);
+
   // ListView Colors
   static Color lightListViewBackgroundColor = Colors.grey[200]!;
   static Color darkListViewBackgroundColor = Colors.grey[800]!;
@@ -194,7 +203,7 @@ class ThemeUtil {
   static Color darkListViewPrimaryTextColor = darkPrimaryAccentColor;
   static Color lightListViewMutedTextColor = lightTextMutedColor;
   static Color darkListViewMutedTextColor = darkTextMutedColor;
-  
+
   // ListTile
   static Color lightListTileTextColor = lightPrimaryColor;
   static Color darkListTileTextColor = darkPrimaryColor;
@@ -398,18 +407,18 @@ class ThemeUtil {
   Color get listViewMutedTextColor => getColor(
         lightListViewMutedTextColor,
         darkListViewMutedTextColor,
-      ); 
+      );
 
   // ListTile Colors
 
   Color get listTileTextColor => getColor(
-    lightListTileTextColor,
-    darkListTileTextColor,
-  );     
+        lightListTileTextColor,
+        darkListTileTextColor,
+      );
   Color get listTileBackgroundColor => getColor(
-    lightListTileBackgroundColor,
-    darkListTileBackgroundColor,
-  );
+        lightListTileBackgroundColor,
+        darkListTileBackgroundColor,
+      );
 
   // AppBar Colors
 
@@ -431,6 +440,13 @@ class ThemeUtil {
   Color get textMutedColor => getColor(
         lightTextMutedColor,
         darkTextMutedColor,
+      );
+
+  // Icon Colors
+
+  Color get iconMutedColor => getColor(
+        lightIconMutedColor,
+        darkIconMutedColor,
       );
 
   // Indicator Colors
@@ -458,6 +474,17 @@ class ThemeUtil {
   Color get progressIndicatorValueColorReversed => getColor(
         darkProgressIndicatorValueColor,
         lightProgressIndicatorValueColor,
+      );
+
+  // Divider Colors
+
+  Color get dividerColor => getColor(
+        lightDividerColor,
+        darkDividerColor,
+      );
+  Color get dividerSelectedColor => getColor(
+        lightDividerSelectedColor,
+        darkDividerSelectedColor,
       );
 
   // FAB Colors

@@ -4,6 +4,12 @@ A study helper application.
 
 ## Features
 
+### v1.0.8
+
+- Cards List (pending)
+- Card Context Menu
+- Search Cards
+
 ### v1.0.7
 
 - Search Decks

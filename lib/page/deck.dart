@@ -3,28 +3,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
-import 'package:vingo/page/page.dart' as Vingo;
 
-class DecksPage extends StatefulWidget {
-  static const String route = "/decks";
-  static const String title = "Decks";
-  static const Icon icon = Icon(Icons.inbox);
-  final Widget? androidDrawer;
+class DeckPage extends StatefulWidget {
+  final String title;
+  final Vingo.Deck deck;
 
-  const DecksPage({
+  const DeckPage({
     Key? key,
-    this.androidDrawer,
+    required this.title,
+    required this.deck,
   }) : super(key: key);
 
   @override
-  _DecksPageState createState() => _DecksPageState();
+  _DeckPageState createState() => _DeckPageState();
 }
 
-class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
-  late Vingo.Decks decks;
-  late ScrollController decksScrollController;
+class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
+  late Vingo.Cards cards;
+  late ScrollController cardsScrollController;
   int selectedIndex = -1;
-  double decksScrollPosition = 0.0;
+  double cardsScrollPosition = 0.0;
 
   bool searchEnabled = false;
   double searchScale = 0.0;
@@ -39,10 +37,10 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    decks = Vingo.Decks();
+    cards = Vingo.Cards();
 
-    decksScrollController = new ScrollController()
-      ..addListener(onDecksScrolled);
+    cardsScrollController = new ScrollController()
+      ..addListener(onCardsScrolled);
 
     searchController = new TextEditingController();
     searchFocusNode = new FocusNode();
@@ -58,12 +56,12 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         });
       });
 
-    refreshDecks();
+    refreshCards();
   }
 
   @override
   void dispose() {
-    decksScrollController.dispose();
+    cardsScrollController.dispose();
     fabAnimationController.dispose();
     searchController.dispose();
     searchFocusNode.dispose();
@@ -72,38 +70,42 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
 
   //----------------------------------------------------------------------------
 
-  Future<void> refreshDecks() async {
+  Future<void> refreshCards() async {
     if (searchEnabled && searchController.text.isNotEmpty) {
-      await decks.refresh(
-        name: searchController.text,
+      await cards.refresh(
+        deckId: widget.deck.id,
+        search: searchController.text,
       );
     } else {
-      await decks.refresh();
+      await cards.refresh(
+        deckId: widget.deck.id,
+      );
+      setState(() {
+        selectedIndex = -1;
+        if (cardsScrollController.hasClients) {
+          cardsScrollController.jumpTo(0.0);
+        }
+      });
     }
-    setState(() {
-      selectedIndex = -1;
-      if (decksScrollController.hasClients) {
-        decksScrollController.jumpTo(0.0);
-      }
-    });
   }
 
-  Future<void> loadMoreDecks() async {
+  Future<void> loadMoreCards() async {
     int count = 0;
     if (searchEnabled && searchController.text.isNotEmpty) {
-      count = await decks.loadMore(
-        name: searchController.text,
+      count = await cards.loadMore(
+        deckId: widget.deck.id,
+        search: searchController.text,
       );
     } else {
-      count = await decks.loadMore();
+      count = await cards.loadMore(deckId: widget.deck.id);
     }
     if (count == 0) return;
     setState(() {});
   }
 
-  void onDecksScrolled() {
+  void onCardsScrolled() {
     // Showing/Hiding FAB
-    double delta = decksScrollController.position.pixels - decksScrollPosition;
+    double delta = cardsScrollController.position.pixels - cardsScrollPosition;
     if (delta > 0) {
       if (fabEnabled) {
         fabAnimationController.reverse(from: 1.0);
@@ -115,30 +117,26 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         fabEnabled = true;
       }
     }
-    decksScrollPosition = decksScrollController.position.pixels;
+    cardsScrollPosition = cardsScrollController.position.pixels;
 
-    // Loading decks
-    if (decks.loading) return;
-    if (decksScrollController.position.pixels >=
-        0.9 * decksScrollController.position.maxScrollExtent) {
-      loadMoreDecks();
+    // Loading cards
+    if (cards.loading) return;
+    if (cardsScrollController.position.pixels >=
+        0.9 * cardsScrollController.position.maxScrollExtent) {
+      loadMoreCards();
     }
   }
 
   void onSearchChanged(BuildContext context, String value) {
-    refreshDecks();
+    refreshCards();
   }
 
-  Future<void> createDeck(BuildContext context) async {
-    String? deckName = await Vingo.InputDialog.show(
-      context: context,
-      title: Vingo.LocalizationsUtil.of(context).deckName,
-      confirmText: Vingo.LocalizationsUtil.of(context).create,
-    );
-    if (deckName != null) {
-      await Vingo.Deck(name: deckName).insert();
-      refreshDecks();
-    }
+  Future<void> studyDeck(BuildContext context) async {
+    print("Study Deck");
+  }
+
+  Future<void> createCard(BuildContext context) async {
+    print("Create Card");
   }
 
   Future<void> showHelp(BuildContext context) async {
@@ -155,8 +153,12 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
           Text(Vingo.LocalizationsUtil.of(context).searchShortcut),
         ],
         [
-          Text(Vingo.LocalizationsUtil.of(context).createANewDeck),
-          Text(Vingo.LocalizationsUtil.of(context).createANewDeckShortcut),
+          Text(Vingo.LocalizationsUtil.of(context).study),
+          Text(Vingo.LocalizationsUtil.of(context).studyShortcut),
+        ],
+        [
+          Text(Vingo.LocalizationsUtil.of(context).createANewCard),
+          Text(Vingo.LocalizationsUtil.of(context).createANewCardShortcut),
         ],
       ],
     );
@@ -165,85 +167,61 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   Future<void> showSearch(BuildContext context) async {
     searchEnabled = !searchEnabled;
     if (searchEnabled) searchFocusNode.requestFocus();
-    refreshDecks();
+    refreshCards();
   }
 
-  void selectDeck(int index) {
+  void selectCard(int index) {
     setState(() {
       selectedIndex = index;
     });
   }
 
-  Future<void> openDeck(BuildContext context, int index) async {
-    if (index < 0 || index >= decks.items.length) return;
-    selectDeck(index);
-    final Vingo.Deck deck = decks.items[index];
-    var result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Vingo.DeckPage(
-          title: deck.name,
-          deck: deck,
-        ),
-      ),
-    );
+  Future<void> openCard(BuildContext context, int index) async {
+    if (index < 0 || index >= cards.items.length) return;
+    selectCard(index);
+    final Vingo.Card card = cards.items[index];
+    print("Open Card");
+    // var result = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => Vingo.CardPage(),
+    //   ),
+    // );
   }
 
-  Future<void> openDeckMenu(BuildContext context, int index) async {
-    if (index < 0 || index >= decks.items.length) return;
-    selectDeck(index);
-    final Vingo.Deck deck = decks.items[index];
+  Future<void> openCardMenu(BuildContext context, int index) async {
+    if (index < 0 || index >= cards.items.length) return;
+    selectCard(index);
+    final Vingo.Card card = cards.items[index];
     var result = await Vingo.ContextMenu.show(
       context: context,
-      title: Vingo.StringUtil.addEllipsis(text: deck.name),
+      title: Vingo.StringUtil.addEllipsis(
+        text: Vingo.LocalizationsUtil.of(context).card,
+      ),
       items: [
-        Vingo.ContextMenuItem(
-          key: Key("rename"),
-          title: Vingo.LocalizationsUtil.of(context).rename,
-          onTap: () {
-            renameDeck(context, index);
-          },
-        ),
         Vingo.ContextMenuItem(
           key: Key("delete"),
           title: Vingo.LocalizationsUtil.of(context).delete,
           onTap: () {
-            deleteDeck(context, index);
+            deleteCard(context, index);
           },
         ),
       ],
     );
   }
 
-  Future<void> renameDeck(BuildContext context, int index) async {
-    if (index < 0 || index >= decks.items.length) return;
-    final Vingo.Deck deck = decks.items[index];
-    var result = await Vingo.InputDialog.show(
-      context: context,
-      title: Vingo.LocalizationsUtil.of(context).rename,
-      currentValue: deck.name,
-    );
-    if (result != null && result.isNotEmpty && result != deck.name) {
-      deck.name = result;
-      await deck.update();
-      refreshDecks();
-    }
-  }
-
-  Future<void> deleteDeck(BuildContext context, int index) async {
-    if (index < 0 || index >= decks.items.length) return;
-    final Vingo.Deck deck = decks.items[index];
+  Future<void> deleteCard(BuildContext context, int index) async {
+    if (index < 0 || index >= cards.items.length) return;
+    final Vingo.Card card = cards.items[index];
     var result = await Vingo.Dialog.show(
       context: context,
       title: Vingo.LocalizationsUtil.of(context).delete,
-      message: Vingo.LocalizationsUtil.of(context).areYouSureYouWantToDeleteX(
-        Vingo.StringUtil.addEllipsis(text: deck.name),
-      ),
+      message: Vingo.LocalizationsUtil.of(context).areYouSure,
       confirmButtonType: Vingo.ButtonType.SECONDARY,
       confirmText: Vingo.LocalizationsUtil.of(context).delete,
     );
     if (result == true) {
-      await decks.removeAt(index);
+      await cards.removeAt(index);
       setState(() {});
     }
   }
@@ -265,14 +243,14 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget decksBuilder(BuildContext context) {
-    if (decks.items.length <= 0) {
+  Widget cardsBuilder(BuildContext context) {
+    if (cards.items.length <= 0) {
       return Expanded(
         child: Center(
           child: Container(
             child:
-                Text(Vingo.LocalizationsUtil.of(context).pressXToCreateANewDeck(
-              Vingo.LocalizationsUtil.of(context).createANewDeckShortcut,
+                Text(Vingo.LocalizationsUtil.of(context).pressXToCreateANewCard(
+              Vingo.LocalizationsUtil.of(context).createANewCardShortcut,
             )),
           ),
         ),
@@ -284,18 +262,17 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
             Vingo.ThemeUtil.of(context).refreshIndicatorBackgroundColor,
         color: Vingo.ThemeUtil.of(context).refreshIndicatorColor,
         onRefresh: () async {
-          refreshDecks();
+          refreshCards();
         },
         child: ListView.builder(
-          controller: decksScrollController,
-          // Force to work with one item
+          controller: cardsScrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           itemCount:
-              decks.hasMore ? decks.items.length + 1 : decks.items.length,
+              cards.hasMore ? cards.items.length + 1 : cards.items.length,
           itemBuilder: (BuildContext context, int index) {
-            if (index >= decks.items.length) return Container();
-            final Vingo.Deck deck = decks.items[index];
+            if (index >= cards.items.length) return Container();
+            final Vingo.Card card = cards.items[index];
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -308,7 +285,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                   ),
                 Directionality(
                   textDirection:
-                      Vingo.LocalizationsUtil.textDirectionByStr(deck.name),
+                      Vingo.LocalizationsUtil.textDirectionByStr(card.front),
                   child: ListTileTheme(
                     selectedColor:
                         Vingo.ThemeUtil.of(context).listTileTextColor,
@@ -316,14 +293,8 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                         Vingo.ThemeUtil.of(context).listTileBackgroundColor,
                     child: ListTile(
                       dense: false,
-                      title: Text(deck.name),
+                      title: Text(card.front),
                       selected: selectedIndex == index,
-                      // leading: Row(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [],
-                      // ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -340,13 +311,13 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                                 : Vingo.ThemeUtil.of(context).iconMutedColor,
                             // hoverColor: Colors.transparent,
                             onPressed: () {
-                              openDeckMenu(context, index);
+                              openCardMenu(context, index);
                             },
                           ),
                         ],
                       ),
                       onTap: () async {
-                        openDeck(context, index);
+                        openCard(context, index);
                       },
                       onLongPress: () async {
                         // openDeckMenu(context, index);
@@ -372,7 +343,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
     return Vingo.Shortcuts(
       autofocus: true,
       onNewDetected: () {
-        createDeck(context);
+        createCard(context);
       },
       onCloseDetected: () {
         Vingo.Messenger.of(context).hide();
@@ -388,7 +359,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          decksBuilder(context),
+          cardsBuilder(context),
         ],
       ),
     );
@@ -400,7 +371,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         title: searchEnabled
             ? searchBuilder(context)
             : Text(
-                Vingo.LocalizationsUtil.of(context).decks,
+                widget.title,
                 style: TextStyle(
                   color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
                   fontWeight: FontWeight.w800,
@@ -431,23 +402,35 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
           ),
         ],
       ),
-      drawer: widget.androidDrawer,
       floatingActionButton: Transform.scale(
         scale: fabScale,
-        child: FloatingActionButton(
-          backgroundColor: Vingo.ThemeUtil.of(context).fabBackgroundColor,
-          child: Icon(
-            Icons.add,
-            color: Vingo.ThemeUtil.of(context).fabIconColor,
-            size: Vingo.ThemeUtil.fabIconSize,
-          ),
-          tooltip: Vingo.LocalizationsUtil.of(context).createANewDeck +
-              " (" +
-              Vingo.LocalizationsUtil.of(context).createANewDeckShortcut +
-              ")",
-          onPressed: () {
-            createDeck(context);
-          },
+        child: Vingo.MultipleFabButton(
+          children: [
+            Vingo.MultipleFabButtonChild(
+              icon: Icons.local_library,
+              scale: 0.85,
+              title: Vingo.LocalizationsUtil.of(context).study,
+              tooltip: Vingo.LocalizationsUtil.of(context).study +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).studyShortcut +
+                  ")",
+              onPressed: () {
+                studyDeck(context);
+              },
+            ),
+            Vingo.MultipleFabButtonChild(
+              icon: Icons.add,
+              scale: 0.85,
+              title: Vingo.LocalizationsUtil.of(context).createANewCard,
+              tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
+                  ")",
+              onPressed: () {
+                createCard(context);
+              },
+            ),
+          ],
         ),
       ),
       body: AnnotatedRegion<SystemUiOverlayStyle>(

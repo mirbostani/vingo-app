@@ -142,7 +142,7 @@ class _InputState extends State<Input> {
                         borderRadius: BorderRadius.circular(radius),
                         borderSide: BorderSide(
                           color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                          width: 0.0,
+                          // width: 0.0,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -150,14 +150,14 @@ class _InputState extends State<Input> {
                         borderSide: BorderSide(
                           color:
                               Vingo.ThemeUtil.of(context).inputFocusedBorderColor,
-                          width: 0.0,
+                          // width: 0.0,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(radius),
                         borderSide: BorderSide(
                           color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                          width: 0.0,
+                          // width: 0.0,
                         ),
                       ),
                     ),
