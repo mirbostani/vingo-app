@@ -7,7 +7,7 @@ class PlatformUtil {
   static String appName = "Vingo";
   static String packageName = "com.mirbostani.vingo";
   static String version = "1.0.8";
-  static String buildNumber = "9";
+  static String buildNumber = "10";
   static String authorLink = "https://mirbostani.com";
   static String licenseLink =
       "https://github.com/mirbostani/vingo-app/blob/main/LICENSE";

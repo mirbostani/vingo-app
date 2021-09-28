@@ -130,7 +130,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   }
 
   Future<void> createDeck(BuildContext context) async {
-    String? deckName = await Vingo.InputDialog.show(
+    String? deckName = await Vingo.TextDialog.show(
       context: context,
       title: Vingo.LocalizationsUtil.of(context).deckName,
       confirmText: Vingo.LocalizationsUtil.of(context).create,
@@ -218,7 +218,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   Future<void> renameDeck(BuildContext context, int index) async {
     if (index < 0 || index >= decks.items.length) return;
     final Vingo.Deck deck = decks.items[index];
-    var result = await Vingo.InputDialog.show(
+    var result = await Vingo.TextDialog.show(
       context: context,
       title: Vingo.LocalizationsUtil.of(context).rename,
       currentValue: deck.name,
@@ -251,7 +251,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   //----------------------------------------------------------------------------
 
   Widget searchBuilder(BuildContext context) {
-    return Vingo.Input(
+    return Vingo.Text(
       focuseNode: searchFocusNode,
       controller: searchController,
       hintText: Vingo.LocalizationsUtil.of(context).search,
@@ -348,9 +348,9 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                       onTap: () async {
                         openDeck(context, index);
                       },
-                      onLongPress: () async {
-                        // openDeckMenu(context, index);
-                      },
+                      // onLongPress: () async {
+                      //   // openDeckMenu(context, index);
+                      // },
                     ),
                   ),
                 ),
@@ -387,9 +387,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          decksBuilder(context),
-        ],
+        children: [decksBuilder(context)],
       ),
     );
   }

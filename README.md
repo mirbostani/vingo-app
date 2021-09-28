@@ -6,7 +6,7 @@ A study helper application.
 
 ### v1.0.8
 
-- Cards List (pending)
+- Cards List
 - Card Context Menu
 - Search Cards
 
@@ -47,6 +47,16 @@ A study helper application.
 - Localization & Translation (`en_US`, `fa_IR`, etc.)
 - Light and Dark Themes
 - Font Resizing
+
+## Requirements
+
+```shell
+$ flutter --version
+Flutter 2.6.0-6.0.pre.210 • channel master • https://github.com/flutter/flutter.git
+Framework • revision 69ae50310b (41 minutes ago) • 2021-09-24 15:30:09 -0700
+Engine • revision dcffd551cb
+Tools • Dart 2.15.0 (build 2.15.0-144.0.dev)
+```
 
 ## Add Linux Support
 

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
 
-class Input extends StatefulWidget {
+class Text extends StatefulWidget {
   final TextEditingController? controller;
   final FocusNode? focuseNode;
   final String? initialValue;
@@ -22,14 +22,16 @@ class Input extends StatefulWidget {
   final bool? autocorrect;
   final bool? enableSuggestions;
   final bool? obscureText;
+  final bool? enableInteractiveSelection;
   final int? changeDelayInMilliseconds;
   final ValueChanged<String>? onChange;
   final ValueChanged<String>? onDelayedChange;
   final ValueChanged<String>? onFieldSubmitted;
   final VoidCallback? onTap;
+  final VoidCallback? onConfirmDetected; // shortcut
   final VoidCallback? onCloseDetected; // shortcut
 
-  const Input({
+  const Text({
     Key? key,
     this.controller,
     this.focuseNode,
@@ -45,19 +47,21 @@ class Input extends StatefulWidget {
     this.autocorrect = false,
     this.enableSuggestions = false,
     this.obscureText = false,
+    this.enableInteractiveSelection = false,
     this.changeDelayInMilliseconds,
     this.onChange,
     this.onDelayedChange,
     this.onFieldSubmitted,
     this.onTap,
+    this.onConfirmDetected,
     this.onCloseDetected,
   }) : super(key: key);
 
   @override
-  _InputState createState() => _InputState();
+  _TextState createState() => _TextState();
 }
 
-class _InputState extends State<Input> {
+class _TextState extends State<Text> {
   static const double radius = 4.0;
   Ui.TextDirection textDirection = Ui.TextDirection.ltr;
   Async.Timer? changeDelayTimer;
@@ -94,9 +98,12 @@ class _InputState extends State<Input> {
   @override
   Widget build(BuildContext context) {
     return Vingo.Shortcuts(
-      autofocus: true,
+      autofocus: false,
       onCloseDetected: () {
         widget.onCloseDetected?.call();
+      },
+      onConfirmDetected: () {
+        widget.onConfirmDetected?.call();
       },
       child: Column(
         children: [
@@ -114,6 +121,7 @@ class _InputState extends State<Input> {
                     autocorrect: widget.autocorrect ?? false,
                     enableSuggestions: widget.enableSuggestions ?? false,
                     obscureText: widget.obscureText ?? false,
+                    enableInteractiveSelection: widget.enableInteractiveSelection ?? false,
                     initialValue: widget.initialValue,
                     cursorColor: Vingo.ThemeUtil.of(context).inputCursorColor,
                     cursorWidth: 2.0,
@@ -213,6 +221,7 @@ class _InputState extends State<Input> {
                     },
                     onFieldSubmitted: (value) {
                       widget.onFieldSubmitted?.call(value);
+                      widget.onConfirmDetected?.call();
                     },
                   ),
                 ],

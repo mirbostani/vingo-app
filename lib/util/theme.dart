@@ -43,7 +43,7 @@ class ThemeUtil {
 
   // Raw Colors
   static Color whiteColor = Colors.white;
-  static Color whiteLightColor = Colors.grey[200]!;
+  static Color whiteLightColor = Colors.grey[100]!;
   static Color blackColor = Color(0xFF333230);
   static Color blackLightColor = Colors.grey[700]!;
   static Color tealColor = Color(0xFF009898);
@@ -55,7 +55,7 @@ class ThemeUtil {
 
   // Primary, Accent, Secondary Colors
   static Color lightPrimaryColor = tealColor;
-  static Color lightPrimaryColor10 = tealColor10;
+  static Color lightPrimaryColor10 = tealColor.withAlpha(10); // tealColor10
   static Color darkPrimaryColor = tealColor;
   static Color lightPrimaryAccentColor = tealLightColor;
   static Color darkPrimaryAccentColor = tealLightColor;
@@ -166,7 +166,7 @@ class ThemeUtil {
   // Input Colors
   static Color lightInputCursorColor = tealColor;
   static Color darkInputCursorColor = Colors.white;
-  static Color lightInputFillColor = lightPrimaryColor10;
+  static Color lightInputFillColor = whiteColor; // lightPrimaryColor10;
   static Color darkInputFillColor = Colors.grey[700]!;
   static Color lightInputFocusColor = Colors.white;
   static Color darkInputFocusColor = Colors.grey[700]!;
@@ -217,6 +217,10 @@ class ThemeUtil {
   // Switch
   static Color lightSwitchActiveColor = lightPrimaryColor;
   static Color darkSwitchActiveColor = darkPrimaryColor;
+
+  // Fonts
+  static String font = "Roboto";
+  static String codeFont = "RobotoMono";
 
   //----------------------------------------------------------------------------
 
@@ -321,8 +325,12 @@ class ThemeUtil {
       brightness: Brightness.dark,
       primaryColor: darkPrimaryColor,
       accentColor: darkPrimaryAccentColor,
+      // colorScheme: ColorScheme(
+      //   primary: darkPrimaryColor,
+      //   secondary: darkPrimaryAccentColor,
+      // ),
       scaffoldBackgroundColor: darkBackgroundColor,
-      fontFamily: "Roboto",
+      fontFamily: font,
       toggleableActiveColor: darkRadioActiveColor,
       // hoverColor: Colors.transparent, // IconButton or ListTile hoverColor
       iconTheme: IconThemeData(
@@ -352,8 +360,12 @@ class ThemeUtil {
       brightness: Brightness.light,
       primaryColor: lightPrimaryColor,
       accentColor: lightPrimaryAccentColor,
+      // colorScheme: ColorScheme(
+      //   primary: lightPrimaryColor,
+      //   secondary: lightPrimaryAccentColor,
+      // ),
       scaffoldBackgroundColor: lightBackgroundColor,
-      fontFamily: "Roboto",
+      fontFamily: font,
       toggleableActiveColor: lightRadioActiveColor,
       // hoverColor: Colors.transparent, // IconButton or ListTile hoverColor
       iconTheme: IconThemeData(

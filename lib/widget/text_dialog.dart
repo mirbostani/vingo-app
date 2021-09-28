@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
 
-class InputDialog extends StatefulWidget {
+class TextDialog extends StatefulWidget {
   final String title;
   final String? currentValue;
   final String? labelText;
@@ -17,7 +17,7 @@ class InputDialog extends StatefulWidget {
   final String? confirmText;
   final String? declineText;
 
-  const InputDialog({
+  const TextDialog({
     Key? key,
     required this.title,
     this.currentValue,
@@ -34,7 +34,7 @@ class InputDialog extends StatefulWidget {
   /// Show input dialog.
   ///
   /// ```dart
-  /// String? result = await Vingo.InputDialog.show(
+  /// String? result = await Vingo.TextDialog.show(
   ///     context: context,
   ///     currentValue: "",
   ///     hintText: ""
@@ -59,7 +59,7 @@ class InputDialog extends StatefulWidget {
         context: context,
         barrierDismissible: barrierDismissible,
         builder: (BuildContext context) {
-          return InputDialog(
+          return TextDialog(
             key: key,
             title: title,
             currentValue: currentValue,
@@ -76,10 +76,10 @@ class InputDialog extends StatefulWidget {
   }
 
   @override
-  _InputDialogState createState() => _InputDialogState();
+  _TextDialogState createState() => _TextDialogState();
 }
 
-class _InputDialogState extends State<InputDialog> {
+class _TextDialogState extends State<TextDialog> {
   String currentValue = "";
 
   @override
@@ -161,7 +161,7 @@ class _InputDialogState extends State<InputDialog> {
                     onCloseDetected: () {
                       onDecline(context);
                     },
-                    child: Vingo.Input(
+                    child: Vingo.Text(
                       autofocus: true,
                       initialValue: currentValue,
                       labelText: widget.labelText,
@@ -172,6 +172,12 @@ class _InputDialogState extends State<InputDialog> {
                       maxLengthEnforcement: widget.maxLength != null
                           ? MaxLengthEnforcement.enforced
                           : MaxLengthEnforcement.none,
+                      onConfirmDetected: () {
+                        onConfirm(context);
+                      },
+                      onCloseDetected: () {
+                        onDecline(context);
+                      },
                       onChange: (value) {
                         currentValue = value;
                       },

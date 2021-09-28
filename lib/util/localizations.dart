@@ -306,6 +306,14 @@ class LocalizationsUtil {
         "Study",
         name: "study",
       );
+  String get save => Intl.Intl.message(
+        "Save",
+        name: "save",
+      );
+  String get saved => Intl.Intl.message(
+        "Saved",
+        name: "saved",
+      );
   String get create => Intl.Intl.message(
         "Create",
         name: "create",
@@ -346,6 +354,18 @@ class LocalizationsUtil {
         "More",
         name: "more",
       );
+  String get cardFront => Intl.Intl.message(
+        "Front",
+        name: "cardFront",
+      );
+  String get cardBack => Intl.Intl.message(
+        "Back",
+        name: "cardBack",
+      );
+  String get back => Intl.Intl.message(
+        "Back",
+        name: "back",
+      );
   String get search => Intl.Intl.message(
         "Search",
         name: "search",
@@ -365,6 +385,18 @@ class LocalizationsUtil {
   String get card => Intl.Intl.message(
         "Card",
         name: "card",
+      );
+  String get createCard => Intl.Intl.message(
+        "Create Card",
+        name: "createCard",
+      );
+  String get viewCard => Intl.Intl.message(
+        "View Card",
+        name: "viewCard",
+      );
+  String get editCard => Intl.Intl.message(
+        "Edit Card",
+        name: "editCard",
       );
   String get cards => Intl.Intl.message(
         "Cards",
@@ -412,6 +444,10 @@ class LocalizationsUtil {
         "Esc",
         name: "closeShortcut",
       );
+  String get backShortcut => Intl.Intl.message(
+        "Ctrl + Esc",
+        name: "backShortcut",
+      );
   String get createANewDeckShortcut => Intl.Intl.message(
         "Ctrl + N",
         name: "createANewDeckShortcut",
@@ -427,6 +463,10 @@ class LocalizationsUtil {
   String get studyShortcut => Intl.Intl.message(
         "Ctrl + L",
         name: "studyShortcut",
+      );
+  String get saveShortcut => Intl.Intl.message(
+        "Ctrl + S",
+        name: "saveShortcut",
       );
 }
 

@@ -51,6 +51,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "add": MessageLookupByLibrary.simpleMessage("Add"),
         "study": MessageLookupByLibrary.simpleMessage("Study"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "saved": MessageLookupByLibrary.simpleMessage("Saved"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),
         "rename": MessageLookupByLibrary.simpleMessage("Rename"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -61,11 +63,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "more": MessageLookupByLibrary.simpleMessage("More"),
+        "back": MessageLookupByLibrary.simpleMessage("Back"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
-        "deckName": MessageLookupByLibrary.simpleMessage("Deck name"),
+        "deckName": MessageLookupByLibrary.simpleMessage("Deck Name"),
         "card": MessageLookupByLibrary.simpleMessage("card"),
+        "cardFront": MessageLookupByLibrary.simpleMessage("Front"),
+        "cardBack": MessageLookupByLibrary.simpleMessage("Back"),
+        "createCard": MessageLookupByLibrary.simpleMessage("Create Card"),
+        "viewCard": MessageLookupByLibrary.simpleMessage("View Card"),
+        "editCard": MessageLookupByLibrary.simpleMessage("Edit Card"),
         "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "createANewDeck":
@@ -80,11 +88,13 @@ class MessageLookup extends MessageLookupByLibrary {
         // Shortcuts
         "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
         "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
+        "backShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + Esc"),
         "createANewDeckShortcut":
             MessageLookupByLibrary.simpleMessage("Ctrl + N"),
         "createANewCardShortcut":
             MessageLookupByLibrary.simpleMessage("Ctrl + N"),
         "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
         "studyShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + L"),
+        "saveShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + S"),
       };
 }

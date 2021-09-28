@@ -760,10 +760,10 @@ class Card {
 
   Card({
     this.id,
+    required this.deckId,
     required this.front,
     this.back,
-    this.attachment,
-    required this.deckId,
+    Map<String, dynamic>? attachment,
     int? sortId,
     int? iteration,
     double? interval,
@@ -771,7 +771,8 @@ class Card {
     int? dueAt,
     int? updatedAt,
     int? createdAt,
-  })  : this.sortId = sortId ?? defaultSortId,
+  })  : this.attachment = attachment ?? Convert.json.decode(defaultAttachment),
+        this.sortId = sortId ?? defaultSortId,
         this.iteration = iteration ?? iteration1,
         this.interval = interval ?? interval1,
         this.easinessFactor = easinessFactor ?? easinessFactorEntryValue,
@@ -787,10 +788,10 @@ class Card {
   String toString() {
     return """{
       id: $id,
+      deck_id: $deckId,
       front: $front,
       back: $back,
       attachment: $attachment,
-      deck_id: $deckId,
       sort_id: $sortId,
       iteration: $iteration,
       interval: $interval,
@@ -803,10 +804,10 @@ class Card {
 
   Card.fromMap(Map<String, dynamic> map)
       : id = map["id"],
+        deckId = map["deck_id"],
         front = map["front"],
         back = map["back"],
         attachment = Convert.json.decode(map["attachment"]),
-        deckId = map["deck_id"],
         sortId = map["sort_id"],
         iteration = map["iteration"],
         interval = map["interval"],
@@ -820,10 +821,10 @@ class Card {
 
     return new Card(
       id: map["id"],
+      deckId: map["deck_id"],
       front: map["front"],
       back: map["back"],
       attachment: attachment,
-      deckId: map["deck_id"],
       sortId: map["sort_id"],
       iteration: map["iteration"],
       interval: map["interval"],
@@ -837,11 +838,11 @@ class Card {
   Map<String, dynamic> toMap() {
     return {
       "id": id,
+      "deck_id": deckId,
       "front": front,
       "back": back,
       "attachment": Convert.json.encode(attachment ?? defaultAttachment),
-      "deckId": deckId,
-      "sortId": sortId ?? defaultSortId,
+      "sort_id": sortId ?? defaultSortId,
       "iteration": iteration ?? iteration1,
       "interval": interval ?? interval,
       "easiness_factor": easinessFactor ?? easinessFactorEntryValue,
@@ -853,10 +854,10 @@ class Card {
 
   Card fromCard(Card card) {
     this.id = card.id;
+    this.deckId = card.deckId;
     this.front = card.front;
     this.back = card.back;
     this.attachment = card.attachment;
-    this.deckId = card.deckId;
     this.sortId = card.sortId;
     this.iteration = card.iteration;
     this.interval = card.interval;

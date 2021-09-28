@@ -17,7 +17,7 @@ class AppLicenseEntry extends LicenseEntry {
 
 class AppLicense {
   static Stream<LicenseEntry> licenses() async* {
-    final String license =
+    final String robotoLicense =
         await rootBundle.loadString('fonts/Roboto/LICENSE.txt');
 
     yield AppLicenseEntry(
@@ -31,7 +31,33 @@ class AppLicense {
         ),
       ],
     );
-    yield LicenseEntryWithLineBreaks(<String>['googlefonts/roboto'], license);
+
+    yield LicenseEntryWithLineBreaks(
+      <String>['googlefonts/roboto'],
+      robotoLicense,
+    );
+
+    //--------------------------------------------------------------------------
+
+    final String robotoMonoLicense =
+        await rootBundle.loadString('fonts/RobotoMono/LICENSE.txt');
+
+    yield AppLicenseEntry(
+      packages: <String>['googlefonts/roboto-mono'],
+      paragraphs: <LicenseParagraph>[
+        LicenseParagraph(
+          '''
+        Copyright (c) 2004 Google, Inc.
+        ''',
+          0,
+        ),
+      ],
+    );
+
+    yield LicenseEntryWithLineBreaks(
+      <String>['googlefonts/roboto-mono'],
+      robotoMonoLicense,
+    );
   }
 
   static Future<void> showDialog(BuildContext context) async {

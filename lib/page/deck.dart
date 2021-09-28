@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
+import 'package:vingo/page/page.dart' as Vingo;
 
 class DeckPage extends StatefulWidget {
   final String title;
@@ -136,7 +137,15 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
   }
 
   Future<void> createCard(BuildContext context) async {
-    print("Create Card");
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Vingo.CardPage(
+          deck: widget.deck,
+        ),
+      ),
+    );
+    refreshCards();
   }
 
   Future<void> showHelp(BuildContext context) async {
@@ -147,6 +156,10 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
         [
           Text(Vingo.LocalizationsUtil.of(context).help),
           Text(Vingo.LocalizationsUtil.of(context).helpShortcut),
+        ],
+        [
+          Text(Vingo.LocalizationsUtil.of(context).back),
+          Text(Vingo.LocalizationsUtil.of(context).backShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).search),
@@ -180,13 +193,15 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
     if (index < 0 || index >= cards.items.length) return;
     selectCard(index);
     final Vingo.Card card = cards.items[index];
-    print("Open Card");
-    // var result = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => Vingo.CardPage(),
-    //   ),
-    // );
+    var result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Vingo.CardPage(
+          deck: widget.deck,
+          card: card,
+        ),
+      ),
+    );
   }
 
   Future<void> openCardMenu(BuildContext context, int index) async {
@@ -222,14 +237,16 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
     );
     if (result == true) {
       await cards.removeAt(index);
-      setState(() {});
+      setState(() {
+        selectedIndex = -1;
+      });
     }
   }
 
   //----------------------------------------------------------------------------
 
   Widget searchBuilder(BuildContext context) {
-    return Vingo.Input(
+    return Vingo.Text(
       focuseNode: searchFocusNode,
       controller: searchController,
       hintText: Vingo.LocalizationsUtil.of(context).search,
@@ -354,6 +371,9 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
       onSearchDetected: () {
         showSearch(context);
       },
+      onBackDetected: () {
+        Navigator.of(context).pop(false);
+      },
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -410,10 +430,10 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
               icon: Icons.local_library,
               scale: 0.85,
               title: Vingo.LocalizationsUtil.of(context).study,
-              tooltip: Vingo.LocalizationsUtil.of(context).study +
-                  " (" +
-                  Vingo.LocalizationsUtil.of(context).studyShortcut +
-                  ")",
+              // tooltip: Vingo.LocalizationsUtil.of(context).study +
+              //     " (" +
+              //     Vingo.LocalizationsUtil.of(context).studyShortcut +
+              //     ")",
               onPressed: () {
                 studyDeck(context);
               },
@@ -422,10 +442,10 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
               icon: Icons.add,
               scale: 0.85,
               title: Vingo.LocalizationsUtil.of(context).createANewCard,
-              tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
-                  " (" +
-                  Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
-                  ")",
+              // tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
+              //     " (" +
+              //     Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
+              //     ")",
               onPressed: () {
                 createCard(context);
               },
