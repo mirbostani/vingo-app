@@ -4,49 +4,22 @@ A study helper application.
 
 ## Features
 
-### v1.0.8+12
+### v1.0.8+13
 
 - Markdown Editor
-
-### v1.0.8
-
 - Cards List
 - Card Context Menu
 - Search Cards
-
-### v1.0.7
-
 - Search Decks
-
-### v1.0.6
-
 - Deck Context Menu
-
-### v1.0.5
-
 - Messenger
 - Shortcuts
-
-### v1.0.4
-
 - Keyboard Shortcuts (Desktop)
-
-### v1.0.3
-
 - Decks List
-
-### v1.0.2
-
 - SQLite Database
 - Deck
-
-### v1.0.1
-
 - Custom Font (Roboto)
 - About Dialog & License Page
-
-### v1.0.0
-
 - Pages (Home, Settings, etc.)
 - Localization & Translation (`en_US`, `fa_IR`, etc.)
 - Light and Dark Themes

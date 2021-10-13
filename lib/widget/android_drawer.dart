@@ -39,20 +39,20 @@ class _AndroidDrawerState extends State<AndroidDrawer> {
               ),
             ),
             //------------------------------------------------------------------
-            ListTile(
-                leading: Container(
-                  height: double.infinity,
-                  child: Vingo.HomePage.icon,
-                ),
-                title: Text(
-                  Vingo.LocalizationsUtil.of(context).home,
-                ),
-                onTap: () {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    Vingo.HomePage.route,
-                  );
-                }),
+            // ListTile(
+            //     leading: Container(
+            //       height: double.infinity,
+            //       child: Vingo.HomePage.icon,
+            //     ),
+            //     title: Text(
+            //       Vingo.LocalizationsUtil.of(context).home,
+            //     ),
+            //     onTap: () {
+            //       Navigator.pushReplacementNamed(
+            //         context,
+            //         Vingo.HomePage.route,
+            //       );
+            //     }),
             //------------------------------------------------------------------
             ListTile(
                 leading: Container(
