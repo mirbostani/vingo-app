@@ -20,6 +20,10 @@ enum OrderType {
 ////////////////////////////////////////////////////////////////////////////////
 
 class SqliteUtil {
+  /// Debug
+  static bool debugDeleteDatabaseOnStart = false;
+
+  /// Properties
   static Map<String, SqliteUtil> _instances = <String, SqliteUtil>{};
   static const String defaultDatabaseName = "vingo.db";
   final String databaseName; // "vingo.db";
@@ -164,7 +168,9 @@ class SqliteUtil {
     if (Io.Platform.isLinux || Io.Platform.isMacOS || Io.Platform.isWindows) {
       SqfliteFfi.sqfliteFfiInit();
       var databaseFactoryFfi = SqfliteFfi.databaseFactoryFfi;
-      // await databaseFactoryFfi.deleteDatabase(dbPath); // delete for test
+      if (debugDeleteDatabaseOnStart) {
+        await databaseFactoryFfi.deleteDatabase(dbPath);
+      }
       if (await Vingo.FileUtil.exists(dbPath)) {
         Vingo.PlatformUtil.log("Opening database: $dbPath");
         // To upgrade or downgrade the schema, you have to provide `version` as
@@ -185,7 +191,9 @@ class SqliteUtil {
       database = databaseFactoryFfi.openDatabase(dbPath, options: options);
       return;
     } else if (Io.Platform.isAndroid || Io.Platform.isIOS) {
-      // await Sqflite.deleteDatabase(dbPath); // delete for test
+      if (debugDeleteDatabaseOnStart) {
+        await Sqflite.deleteDatabase(dbPath);
+      }
       if (await Sqflite.databaseExists(dbPath)) {
         Vingo.PlatformUtil.log("Opening database: $dbPath");
         database = Sqflite.openDatabase(
@@ -990,10 +998,10 @@ class Card {
     if (search.isNotEmpty) {
       String w = "";
       search.split(" ").forEach((keyword) {
-        w += (w.isNotEmpty ? " OR " : "") + "name LIKE '%$keyword%'";
+        w += (w.isNotEmpty ? " OR " : "") + "front LIKE '%$keyword%'";
       });
       where = where == null ? w : where + " AND ($w)";
-      // where += "name LIKE '%$search%'";
+      // where += "front LIKE '%$search%'";
     }
 
     String? orderBy;

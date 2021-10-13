@@ -68,7 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
         "deckName": MessageLookupByLibrary.simpleMessage("Deck Name"),
-        "card": MessageLookupByLibrary.simpleMessage("card"),
+        "card": MessageLookupByLibrary.simpleMessage("Card"),
         "cardFront": MessageLookupByLibrary.simpleMessage("Front"),
         "cardBack": MessageLookupByLibrary.simpleMessage("Back"),
         "createCard": MessageLookupByLibrary.simpleMessage("Create Card"),

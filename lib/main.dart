@@ -15,6 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Vingo.StorageUtil.init();
   await Vingo.SqliteUtil.getInstance().open();
+  await Vingo.PlatformUtil.setWindowSize(
+    size: Vingo.StorageUtil.getWindowSize(),
+  );
 
   runApp(
     new VingoApp(),
@@ -97,7 +100,7 @@ class _VingoAppState extends State<VingoApp> {
         },
         home: Vingo.DecksPage(
           androidDrawer: Vingo.AndroidDrawer(),
-        ),        
+        ),
         routes: {
           PageRoutes.home: (context) => Vingo.HomePage(
                 androidDrawer: Vingo.AndroidDrawer(),

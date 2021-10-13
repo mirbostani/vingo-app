@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -286,89 +287,106 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
         onRefresh: () async {
           refreshDecks();
         },
-        child: ListView.builder(
-          controller: decksScrollController,
-          // Force to work with one item
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemCount:
-              decks.hasMore ? decks.items.length + 1 : decks.items.length,
-          itemBuilder: (BuildContext context, int index) {
-            if (index >= decks.items.length) return Container();
-            final Vingo.Deck deck = decks.items[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (index == 0)
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.stylus,
+            },
+          ),
+          child: ListView.builder(
+            controller: decksScrollController,
+            // shrinkWrap: true,
+            // Force to work with one item
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount:
+                decks.hasMore ? decks.items.length + 1 : decks.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (index >= decks.items.length) return Container();
+              final Vingo.Deck deck = decks.items[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (index == 0)
+                    Divider(
+                      height: 1,
+                      color: selectedIndex == 0
+                          ? Vingo.ThemeUtil.of(context).dividerSelectedColor
+                          : Vingo.ThemeUtil.of(context).dividerColor,
+                    ),
+                  Directionality(
+                    textDirection:
+                        Vingo.LocalizationsUtil.textDirectionByStr(deck.name),
+                    child: ListTileTheme(
+                      selectedColor:
+                          Vingo.ThemeUtil.of(context).listTileTextColor,
+                      selectedTileColor:
+                          Vingo.ThemeUtil.of(context).listTileBackgroundColor,
+                      child: ListTile(
+                        dense: false,
+                        title: Text(deck.name),
+                        selected: selectedIndex == index,
+                        // leading: Row(
+                        //   mainAxisSize: MainAxisSize.min,
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [],
+                        // ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.more_horiz),
+                              iconSize: Vingo.ThemeUtil.iconSizeSmall,
+                              splashRadius:
+                                  Vingo.ThemeUtil.iconSizeSmallSplashRadius,
+                              // tooltip: Vingo.LocalizationsUtil.of(context).more,
+                              color: selectedIndex == index
+                                  ? Vingo.ThemeUtil.of(context)
+                                      .buttonPrimaryColor
+                                  : Vingo.ThemeUtil.of(context).iconMutedColor,
+                              hoverColor: Colors.transparent,
+                              onPressed: () {
+                                openDeckMenu(context, index);
+                              },
+                            ),
+                          ],
+                        ),
+                        onTap: () async {
+                          openDeck(context, index);
+                        },
+                      ),
+                    ),
+                  ),
                   Divider(
                     height: 1,
-                    color: selectedIndex == 0
+                    color: selectedIndex == index || selectedIndex == index + 1
                         ? Vingo.ThemeUtil.of(context).dividerSelectedColor
                         : Vingo.ThemeUtil.of(context).dividerColor,
                   ),
-                Directionality(
-                  textDirection:
-                      Vingo.LocalizationsUtil.textDirectionByStr(deck.name),
-                  child: ListTileTheme(
-                    selectedColor:
-                        Vingo.ThemeUtil.of(context).listTileTextColor,
-                    selectedTileColor:
-                        Vingo.ThemeUtil.of(context).listTileBackgroundColor,
-                    child: ListTile(
-                      dense: false,
-                      title: Text(deck.name),
-                      selected: selectedIndex == index,
-                      // leading: Row(
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   children: [],
-                      // ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.more_horiz),
-                            iconSize: Vingo.ThemeUtil.iconSizeSmall,
-                            splashRadius:
-                                Vingo.ThemeUtil.iconSizeSmallSplashRadius,
-                            tooltip: Vingo.LocalizationsUtil.of(context).more,
-                            color: selectedIndex == index
-                                ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
-                                : Vingo.ThemeUtil.of(context).iconMutedColor,
-                            // hoverColor: Colors.transparent,
-                            onPressed: () {
-                              openDeckMenu(context, index);
-                            },
-                          ),
-                        ],
-                      ),
-                      onTap: () async {
-                        openDeck(context, index);
-                      },
-                      // onLongPress: () async {
-                      //   // openDeckMenu(context, index);
-                      // },
-                    ),
-                  ),
-                ),
-                Divider(
-                  height: 1,
-                  color: selectedIndex == index || selectedIndex == index + 1
-                      ? Vingo.ThemeUtil.of(context).dividerSelectedColor
-                      : Vingo.ThemeUtil.of(context).dividerColor,
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget bodyBuilder(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [decksBuilder(context)],
+    );
+  }
+
+  Widget androidBuilder(BuildContext context) {
     return Vingo.Shortcuts(
       autofocus: true,
       onNewDetected: () {
@@ -383,77 +401,68 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
       onSearchDetected: () {
         showSearch(context);
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [decksBuilder(context)],
-      ),
-    );
-  }
-
-  Widget androidBuilder(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: searchEnabled
-            ? searchBuilder(context)
-            : Text(
-                Vingo.LocalizationsUtil.of(context).decks,
-                style: TextStyle(
-                  color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
-                  fontWeight: FontWeight.w800,
+      child: Scaffold(
+        appBar: AppBar(
+          title: searchEnabled
+              ? searchBuilder(context)
+              : Text(
+                  Vingo.LocalizationsUtil.of(context).decks,
+                  style: TextStyle(
+                    color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-        leading: searchEnabled ? Container() : null,
-        leadingWidth: searchEnabled ? 0.0 : null,
-        actions: [
-          IconButton(
-            icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
-            tooltip: Vingo.LocalizationsUtil.of(context).search +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).searchShortcut +
-                ")",
-            onPressed: () {
-              showSearch(context);
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.help_outline),
-            tooltip: Vingo.LocalizationsUtil.of(context).help +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).helpShortcut +
-                ")",
-            onPressed: () {
-              showHelp(context);
-            },
-          ),
-        ],
-      ),
-      drawer: widget.androidDrawer,
-      floatingActionButton: Transform.scale(
-        scale: fabScale,
-        child: FloatingActionButton(
-          backgroundColor: Vingo.ThemeUtil.of(context).fabBackgroundColor,
-          child: Icon(
-            Icons.add,
-            color: Vingo.ThemeUtil.of(context).fabIconColor,
-            size: Vingo.ThemeUtil.fabIconSize,
-          ),
-          tooltip: Vingo.LocalizationsUtil.of(context).createANewDeck +
-              " (" +
-              Vingo.LocalizationsUtil.of(context).createANewDeckShortcut +
-              ")",
-          onPressed: () {
-            createDeck(context);
-          },
-        ),
-      ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-            // statusBarColor: Colors.white,
-            // systemNavigationBarColor: Colors.white,
+          leading: searchEnabled ? Container() : null,
+          leadingWidth: searchEnabled ? 0.0 : null,
+          actions: [
+            IconButton(
+              icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
+              tooltip: Vingo.LocalizationsUtil.of(context).search +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).searchShortcut +
+                  ")",
+              onPressed: () {
+                showSearch(context);
+              },
             ),
-        child: bodyBuilder(context),
+            IconButton(
+              icon: Icon(Icons.help_outline),
+              tooltip: Vingo.LocalizationsUtil.of(context).help +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).helpShortcut +
+                  ")",
+              onPressed: () {
+                showHelp(context);
+              },
+            ),
+          ],
+        ),
+        drawer: widget.androidDrawer,
+        floatingActionButton: Transform.scale(
+          scale: fabScale,
+          child: FloatingActionButton(
+            backgroundColor: Vingo.ThemeUtil.of(context).fabBackgroundColor,
+            child: Icon(
+              Icons.add,
+              color: Vingo.ThemeUtil.of(context).fabIconColor,
+              size: Vingo.ThemeUtil.fabIconSize,
+            ),
+            tooltip: Vingo.LocalizationsUtil.of(context).createANewDeck +
+                " (" +
+                Vingo.LocalizationsUtil.of(context).createANewDeckShortcut +
+                ")",
+            onPressed: () {
+              createDeck(context);
+            },
+          ),
+        ),
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+              // statusBarColor: Colors.white,
+              // systemNavigationBarColor: Colors.white,
+              ),
+          child: bodyBuilder(context),
+        ),
       ),
     );
   }

@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:ui' as Ui;
 import 'dart:async' as Async;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -10,12 +12,14 @@ import 'package:vingo/widget/widget.dart' as Vingo;
 class Markdown extends StatefulWidget {
   final MarkdownEditingController controller;
   final String? hintText;
+  final bool? enabled;
   final EdgeInsets? padding;
 
   const Markdown({
     Key? key,
     required this.controller,
     this.hintText,
+    this.enabled = true,
     this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
@@ -24,9 +28,12 @@ class Markdown extends StatefulWidget {
 }
 
 class _MarkdownState extends State<Markdown> {
+  Offset cursorOffset = Offset(0, 0);
+
   @override
   void initState() {
     super.initState();
+    widget.controller.addListener(onTextChanged);
   }
 
   @override
@@ -34,7 +41,25 @@ class _MarkdownState extends State<Markdown> {
     super.dispose();
   }
 
-  void onTextChanged() {}
+  void onTextChanged() {
+    widget.controller.offsets.forEach((key, value) {});
+    // Offset computedOffset = computeCursorOffset();
+    // print(computedOffset);
+    // print(widget.controller.text);
+    // if (cursorOffset != computedOffset) {
+    //   setState(() {
+    //     cursorOffset = computedOffset;
+    //   });
+    // }
+  }
+
+  // Offset computeCursorOffset() {
+  //   double dx = 0.0;
+  //   widget.controller.offsets.values.forEach((value) {
+  //     dx += value * 7;
+  //   });
+  //   return Offset(dx, 0.0);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +69,18 @@ class _MarkdownState extends State<Markdown> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Vingo.Text(
+            // EditableText(
+            //   style: TextStyle(
+            //     // color: Colors.black,
+            //   ),
+            //   backgroundCursorColor: Colors.red,
+            //   cursorColor: Colors.blue,
+            //   focusNode: FocusNode(),
+            //   cursorOffset: cursorOffset,
+
+            obscureText: false,
+            readOnly: false,
+            enabled: widget.enabled,
             hintText: widget.hintText,
             controller: widget.controller,
             autofocus: true,
@@ -51,6 +88,7 @@ class _MarkdownState extends State<Markdown> {
             enableInteractiveSelection: true,
             keyboardType: TextInputType.multiline,
             maxLines: null,
+            onEditingComplete: () {},
           )
         ],
       ),
@@ -67,7 +105,9 @@ typedef MatchProcessCallback = InlineSpan Function(
     RegExpMatch match, TextStyle? style);
 
 class MarkdownEditingController extends TextEditingController {
-  static const String inv = "\u200b";
+  bool plainTextEnabled = false;
+  static const String inv = "\u200d"; // int 0x200d; or "\u200b" invisible char
+  late Map<int, int> offsets = <int, int>{};
 
   @override
   TextSpan buildTextSpan({
@@ -83,10 +123,23 @@ class MarkdownEditingController extends TextEditingController {
     //   return TextSpan(style: style, text: text);
     // }
 
+    if (plainTextEnabled) {
+      return TextSpan(
+        text: this.text,
+        style: TextStyle(
+          fontFamily: Vingo.ThemeUtil.codeFont,
+        ),
+      );
+    }
+
+    offsets = {};
+
     List<InlineSpan> spans = run(
       context: context,
       functions: <Function>[
+        blockCode,
         blockImage,
+        inlineLink,
         inlineBoldItalicCode,
         inlineBoldItalic,
         inlineBoldCode,
@@ -99,7 +152,6 @@ class MarkdownEditingController extends TextEditingController {
       text: text,
       style: style,
     );
-
     return TextSpan(
       children: spans,
     );
@@ -164,7 +216,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*\*\*([^\*]+?)\*\*\*"),
+      pattern: RegExp(r"\*\*\*([^\*\n]+?)\*\*\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv${match.group(1)}$inv$inv$inv",
@@ -188,7 +240,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*\*([^\*]+?)\*\*"),
+      pattern: RegExp(r"\*\*([^\*\n]+?)\*\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv${match.group(1)}$inv$inv",
@@ -211,7 +263,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*([^\*]+?)\*"),
+      pattern: RegExp(r"\*([^\*\n]+?)\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv${match.group(1)}$inv",
@@ -234,14 +286,22 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"`([^`]+?)`"),
+      pattern: RegExp(r"`([^`\n]+?)`"),
       matchProcess: (match, style) {
         return TextSpan(
-          text: "$inv${match.group(1)}$inv",
-          style: style!.merge(TextStyle(
-            backgroundColor: Colors.grey.withAlpha(100),
-            fontFamily: Vingo.ThemeUtil.codeFont,
-          )),
+          children: [
+            TextSpan(text: "$inv"),
+            TextSpan(
+              text: match.group(1),
+              style: style!.merge(
+                TextStyle(
+                  backgroundColor: Colors.grey.withAlpha(100),
+                  fontFamily: Vingo.ThemeUtil.codeFont,
+                ),
+              ),
+            ),
+            TextSpan(text: "$inv"),
+          ],
         );
       },
       text: text,
@@ -258,7 +318,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*\*\*`([^`]+?)`\*\*\*"),
+      pattern: RegExp(r"\*\*\*`([^`\n]+?)`\*\*\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv$inv${match.group(1)}$inv$inv$inv$inv",
@@ -284,7 +344,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*\*`([^`]+?)`\*\*"),
+      pattern: RegExp(r"\*\*`([^`\n]+?)`\*\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv${match.group(1)}$inv$inv$inv",
@@ -309,7 +369,7 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return inline(
       context: context,
-      pattern: RegExp(r"\*`([^`]+?)`\*"),
+      pattern: RegExp(r"\*`([^`\n]+?)`\*"),
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv${match.group(1)}$inv$inv",
@@ -318,6 +378,37 @@ class MarkdownEditingController extends TextEditingController {
             fontFamily: Vingo.ThemeUtil.codeFont,
             fontStyle: Ui.FontStyle.italic,
           )),
+        );
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
+  List<InlineSpan> inlineLink({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return inline(
+      context: context,
+      pattern: RegExp(r"\[([^\[\]]*?)\]\(([^\(\)]*?)\)"),
+      matchProcess: (match, style) {
+        return TextSpan(
+          text: match.group(1) ?? "link",
+          style: style!.merge(
+            TextStyle(
+              color: Colors.blue,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+          recognizer: new TapGestureRecognizer()
+            ..onTap = () {
+              String url = match.group(2) ?? "";
+              Vingo.PlatformUtil.launchUrl(url);
+            },
         );
       },
       text: text,
@@ -377,6 +468,104 @@ class MarkdownEditingController extends TextEditingController {
 
   //----------------------------------------------------------------------------
 
+  List<InlineSpan> blockCode({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return block(
+      context: context,
+      pattern: RegExp(r"```([^`]*?)\n([^`]+?)\n```"),
+      matchProcess: (match, style) {
+        InlineSpan span = TextSpan(
+          text: List.generate(match.group(0)!.length, (index) => inv).join(),
+          // semanticsLabel: "SEMANTIC",
+          children: [
+            WidgetSpan(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withAlpha(120),
+                        borderRadius: BorderRadius.only(
+                          topLeft:
+                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                          topRight:
+                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: Vingo.ThemeUtil.paddingQuarter,
+                        bottom: Vingo.ThemeUtil.paddingQuarter,
+                        left: Vingo.ThemeUtil.padding,
+                        right: Vingo.ThemeUtil.padding,
+                      ),
+                      child: Text(match.group(1) ?? "",
+                          style: TextStyle(
+                            fontSize: Vingo.ThemeUtil.textFontSizeSmall,
+                            color: Colors.white,
+                          )),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withAlpha(50),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft:
+                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                          bottomRight:
+                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: Vingo.ThemeUtil.padding,
+                        bottom: Vingo.ThemeUtil.padding,
+                        left: Vingo.ThemeUtil.padding,
+                        right: Vingo.ThemeUtil.padding,
+                      ),
+                      child: Text(
+                        match.group(2) ?? "",
+                        style: TextStyle(
+                          fontFamily: Vingo.ThemeUtil.codeFont,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          style: style!.merge(
+            TextStyle(
+              fontFamily: Vingo.ThemeUtil.codeFont,
+            ),
+          ),
+        );
+
+
+        // Future.delayed(Duration.zero, () async {
+        //   if (value.text.length == 39) {
+        //     this.text += "x";
+        //   }
+        // });
+
+        if (match.group(0) != null) {
+          offsets[match.start] = 1;
+        }
+
+        return span;
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
   List<InlineSpan> blockImage({
     required BuildContext context,
     required String text,
@@ -385,15 +574,13 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return block(
       context: context,
-      pattern: RegExp(r"\[([^\[\]]*?)\]\(([^\(\)]*?)\)"),
+      pattern: RegExp(r"!\[([^\[\]]*?)\]\(([^\(\)]*?)\)"),
       matchProcess: (match, style) {
         InlineSpan span = TextSpan(
+          text: List.generate(match.group(0)!.length, (index) => inv)
+              .toList()
+              .join(),
           children: [
-            TextSpan(
-              text: List.generate(match.group(0)!.length, (index) => inv)
-                  .toList()
-                  .join(),
-            ),
             WidgetSpan(
               child: Vingo.ImageExtended(
                 url: match.group(2) ?? "",
@@ -422,9 +609,6 @@ class MarkdownEditingController extends TextEditingController {
           ],
           style: style,
         );
-
-        // print(this.selection);
-        // print(this.text.length);
 
         // Future.delayed(Duration.zero, () async {
         //   if (value.selection.isValid && value.selection.isCollapsed) {

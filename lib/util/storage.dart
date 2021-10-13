@@ -1,4 +1,5 @@
 import 'dart:io' as Io;
+import 'dart:ui' as Ui;
 import 'package:flutter/foundation.dart'; // kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ class StorageUtil {
   static const keyLocaleName = "locale_name";
   static const keyTheme = "theme";
   static const keyTextScaleFactor = "text_scale_factor";
+  static const keyWindowSize = "window_size";
 
   /// Class initialization
   ///
@@ -166,5 +168,25 @@ class StorageUtil {
       textScaleFactor = 1.0;
     }
     return textScaleFactor;
+  }
+
+  //----------------------------------------------------------------------------
+
+  static Future<Ui.Size> setWindowSize(Ui.Size size) async {
+    await setString(key: keyWindowSize, value: "${size.width};${size.height}");
+    return size;
+  }
+
+  static Ui.Size getWindowSize() {
+    String value = getStringSync(key: keyWindowSize) ?? "";
+    Ui.Size size = Vingo.PlatformUtil.defaultWindowSize;
+    if (value.isNotEmpty && value.contains(";")) {
+      double width = double.tryParse(value.split(";")[0]) ??
+          Vingo.PlatformUtil.defaultWindowSize.width;
+      double height = double.tryParse(value.split(";")[1]) ??
+          Vingo.PlatformUtil.defaultWindowSize.height;
+      size = Ui.Size(width, height);
+    }
+    return size;
   }
 }

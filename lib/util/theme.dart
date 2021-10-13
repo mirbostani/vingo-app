@@ -81,8 +81,8 @@ class ThemeUtil {
   static Color darkSnackBarTextColor = Colors.black54;
 
   // Icon Colors
-  static Color lightIconColor = Colors.grey[300]!;
-  static Color darkIconColor = Colors.grey;
+  static Color lightIconColor = Colors.black;
+  static Color darkIconColor = Colors.white;
   static Color lightIconMutedColor = Colors.grey.shade400;
   static Color darkIconMutedColor = Colors.grey.shade400;
 
@@ -456,6 +456,14 @@ class ThemeUtil {
 
   // Icon Colors
 
+  Color get iconColor => getColor(
+        lightIconColor,
+        darkIconColor,
+      );
+  Color get iconColorReversed => getColor(
+        darkIconColor,
+        lightIconColor,
+      );
   Color get iconMutedColor => getColor(
         lightIconMutedColor,
         darkIconMutedColor,

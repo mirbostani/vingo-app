@@ -59,7 +59,10 @@ class Messenger {
               Flexible(child: Container()),
               if (closeButton)
                 IconButton(
-                  icon: Icon(Icons.close),
+                  icon: Icon(
+                    Icons.close,
+                    color: Vingo.ThemeUtil.of(buildContext).iconColorReversed,
+                  ),
                   tooltip: Vingo.LocalizationsUtil.of(buildContext).close +
                       ' (' +
                       Vingo.LocalizationsUtil.of(buildContext).closeShortcut +

@@ -3,6 +3,7 @@ export 'app_license.dart';
 export 'button.dart';
 export 'context_menu.dart';
 export 'dialog.dart';
+export 'draggable_list_tile.dart';
 export 'image_extended.dart';
 export 'text_dialog.dart';
 export 'markdown.dart';

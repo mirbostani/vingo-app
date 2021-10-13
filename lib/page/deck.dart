@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,11 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
   late ScrollController cardsScrollController;
   int selectedIndex = -1;
   double cardsScrollPosition = 0.0;
+
+  Key? draggableKey;
+  Key? lastMoveDragKey;
+  Key? lastMoveTargetKey;
+  bool? lastMoveUpward;
 
   bool searchEnabled = false;
   double searchScale = 0.0;
@@ -81,13 +87,13 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
       await cards.refresh(
         deckId: widget.deck.id,
       );
-      setState(() {
-        selectedIndex = -1;
-        if (cardsScrollController.hasClients) {
-          cardsScrollController.jumpTo(0.0);
-        }
-      });
     }
+    setState(() {
+      selectedIndex = -1;
+      if (cardsScrollController.hasClients) {
+        cardsScrollController.jumpTo(0.0);
+      }
+    });
   }
 
   Future<void> loadMoreCards() async {
@@ -243,6 +249,37 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> move(Key? dragKey, Key? targetKey, bool upward) async {
+    if (dragKey == null || targetKey == null) return;
+    if (dragKey == lastMoveDragKey &&
+        targetKey == lastMoveTargetKey &&
+        upward == lastMoveUpward) return;
+
+    // print("$dragKey $targetKey $upward");
+
+    dragKey as ValueKey;
+    targetKey as ValueKey;
+
+    int dragIndex = cards.items.indexWhere(
+        (item) => item.id == (dragKey.value as Map<String, dynamic>)["id"]);
+    Vingo.Card? dragItem;
+    if (dragIndex != -1) {
+      dragItem = cards.items.removeAt(dragIndex);
+    }
+    int targetIndex = cards.items.indexWhere(
+        (item) => item.id == (targetKey.value as Map<String, dynamic>)["id"]);
+    targetIndex = targetIndex + (upward ? 0 : 1);
+    if (targetIndex != -1 && dragItem != null) {
+      cards.items.insert(targetIndex, dragItem);
+    }
+
+    setState(() {
+      lastMoveDragKey = dragKey;
+      lastMoveTargetKey = targetKey;
+      lastMoveUpward = upward;
+    });
+  }
+
   //----------------------------------------------------------------------------
 
   Widget searchBuilder(BuildContext context) {
@@ -281,82 +318,112 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
         onRefresh: () async {
           refreshCards();
         },
-        child: ListView.builder(
-          controller: cardsScrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemCount:
-              cards.hasMore ? cards.items.length + 1 : cards.items.length,
-          itemBuilder: (BuildContext context, int index) {
-            if (index >= cards.items.length) return Container();
-            final Vingo.Card card = cards.items[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (index == 0)
-                  Divider(
-                    height: 1,
-                    color: selectedIndex == 0
-                        ? Vingo.ThemeUtil.of(context).dividerSelectedColor
-                        : Vingo.ThemeUtil.of(context).dividerColor,
-                  ),
-                Directionality(
-                  textDirection:
-                      Vingo.LocalizationsUtil.textDirectionByStr(card.front),
-                  child: ListTileTheme(
-                    selectedColor:
-                        Vingo.ThemeUtil.of(context).listTileTextColor,
-                    selectedTileColor:
-                        Vingo.ThemeUtil.of(context).listTileBackgroundColor,
-                    child: ListTile(
-                      dense: false,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.stylus,
+            },
+          ),
+          child: ListView.builder(
+            controller: cardsScrollController,
+            // shrinkWrap: true,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemCount:
+                cards.hasMore ? cards.items.length + 1 : cards.items.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (index >= cards.items.length) return Container();
+              final Vingo.Card card = cards.items[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (index == 0)
+                    Divider(
+                      height: 1,
+                      color: selectedIndex == 0
+                          ? Vingo.ThemeUtil.of(context).dividerSelectedColor
+                          : Vingo.ThemeUtil.of(context).dividerColor,
+                    ),
+                  Directionality(
+                    textDirection: Vingo.LocalizationsUtil.textDirectionByStr(
+                      card.front,
+                    ),
+                    child: Vingo.DraggableListTile(
+                      key: ValueKey({"id": card.id}),
+                      enableDraggable: false,
+                      // showDraggable: !(invisibleDraggableKey?.value == card.id),
+                      level: 0,
                       title: Text(card.front),
-                      selected: selectedIndex == index,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.more_horiz),
-                            iconSize: Vingo.ThemeUtil.iconSizeSmall,
-                            splashRadius:
-                                Vingo.ThemeUtil.iconSizeSmallSplashRadius,
-                            tooltip: Vingo.LocalizationsUtil.of(context).more,
-                            color: selectedIndex == index
-                                ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
-                                : Vingo.ThemeUtil.of(context).iconMutedColor,
-                            // hoverColor: Colors.transparent,
-                            onPressed: () {
-                              openCardMenu(context, index);
-                            },
-                          ),
-                        ],
+                      leadingIcon: Icon(
+                        Icons.arrow_right,
+                        color: selectedIndex == index
+                            ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
+                            : Vingo.ThemeUtil.of(context).iconMutedColor,
                       ),
-                      onTap: () async {
-                        openCard(context, index);
+                      tileColor: selectedIndex == index
+                          ? Vingo.ThemeUtil.of(context).listTileBackgroundColor
+                          : null,
+                      moreButtonColor: selectedIndex == index
+                          ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
+                          : Vingo.ThemeUtil.of(context).iconMutedColor,
+                      onMorePressed: (key) {
+                        openCardMenu(context, index);
                       },
-                      onLongPress: () async {
-                        // openDeckMenu(context, index);
+                      onDragStarted: (key) {
+                        selectedIndex = -1;
+                        draggableKey = key;
+                      },
+                      onDragEnded: (key) {
+                        draggableKey = null;
+                      },
+                      onDragCanceled: (key) {
+                        draggableKey = null;
+                      },
+                      onDragTargetMoveUp: (key) {
+                        move(draggableKey, key, false);
+                      },
+                      onDragTargetMoveDown: (key) {
+                        move(draggableKey, key, true);
+                      },
+                      onDragTargetAcceptChild: (draggableKey, dragTargetKey) {
+                        // selectedIndex = index;
+                        // setState(() {});
+                        // print('onDragTargetAcceptedChild: $dragTargetKey -> $dragTargetKey');
+                      },
+                      onTap: (key) {
+                        openCard(context, index);
                       },
                     ),
                   ),
-                ),
-                Divider(
-                  height: 1,
-                  color: selectedIndex == index || selectedIndex == index + 1
-                      ? Vingo.ThemeUtil.of(context).dividerSelectedColor
-                      : Vingo.ThemeUtil.of(context).dividerColor,
-                ),
-              ],
-            );
-          },
+                  Divider(
+                    height: 1,
+                    color: selectedIndex == index || selectedIndex == index + 1
+                        ? Vingo.ThemeUtil.of(context).dividerSelectedColor
+                        : Vingo.ThemeUtil.of(context).dividerColor,
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget bodyBuilder(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        cardsBuilder(context),
+      ],
+    );
+  }
+
+  Widget androidBuilder(BuildContext context) {
     return Vingo.Shortcuts(
       autofocus: true,
       onNewDetected: () {
@@ -374,91 +441,80 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
       onBackDetected: () {
         Navigator.of(context).pop(false);
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          cardsBuilder(context),
-        ],
-      ),
-    );
-  }
-
-  Widget androidBuilder(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: searchEnabled
-            ? searchBuilder(context)
-            : Text(
-                widget.title,
-                style: TextStyle(
-                  color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
-                  fontWeight: FontWeight.w800,
+      child: Scaffold(
+        appBar: AppBar(
+          title: searchEnabled
+              ? searchBuilder(context)
+              : Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
-        leading: searchEnabled ? Container() : null,
-        leadingWidth: searchEnabled ? 0.0 : null,
-        actions: [
-          IconButton(
-            icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
-            tooltip: Vingo.LocalizationsUtil.of(context).search +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).searchShortcut +
-                ")",
-            onPressed: () {
-              showSearch(context);
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.help_outline),
-            tooltip: Vingo.LocalizationsUtil.of(context).help +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).helpShortcut +
-                ")",
-            onPressed: () {
-              showHelp(context);
-            },
-          ),
-        ],
-      ),
-      floatingActionButton: Transform.scale(
-        scale: fabScale,
-        child: Vingo.MultipleFabButton(
-          children: [
-            Vingo.MultipleFabButtonChild(
-              icon: Icons.local_library,
-              scale: 0.85,
-              title: Vingo.LocalizationsUtil.of(context).study,
-              // tooltip: Vingo.LocalizationsUtil.of(context).study +
-              //     " (" +
-              //     Vingo.LocalizationsUtil.of(context).studyShortcut +
-              //     ")",
+          leading: searchEnabled ? Container() : null,
+          leadingWidth: searchEnabled ? 0.0 : null,
+          actions: [
+            IconButton(
+              icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
+              tooltip: Vingo.LocalizationsUtil.of(context).search +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).searchShortcut +
+                  ")",
               onPressed: () {
-                studyDeck(context);
+                showSearch(context);
               },
             ),
-            Vingo.MultipleFabButtonChild(
-              icon: Icons.add,
-              scale: 0.85,
-              title: Vingo.LocalizationsUtil.of(context).createANewCard,
-              // tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
-              //     " (" +
-              //     Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
-              //     ")",
+            IconButton(
+              icon: Icon(Icons.help_outline),
+              tooltip: Vingo.LocalizationsUtil.of(context).help +
+                  " (" +
+                  Vingo.LocalizationsUtil.of(context).helpShortcut +
+                  ")",
               onPressed: () {
-                createCard(context);
+                showHelp(context);
               },
             ),
           ],
         ),
-      ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-            // statusBarColor: Colors.white,
-            // systemNavigationBarColor: Colors.white,
-            ),
-        child: bodyBuilder(context),
+        floatingActionButton: Transform.scale(
+          scale: fabScale,
+          child: Vingo.MultipleFabButton(
+            children: [
+              // Vingo.MultipleFabButtonChild(
+              //   icon: Icons.local_library,
+              //   scale: 0.85,
+              //   title: Vingo.LocalizationsUtil.of(context).study,
+              //   // tooltip: Vingo.LocalizationsUtil.of(context).study +
+              //   //     " (" +
+              //   //     Vingo.LocalizationsUtil.of(context).studyShortcut +
+              //   //     ")",
+              //   onPressed: () {
+              //     studyDeck(context);
+              //   },
+              // ),
+              Vingo.MultipleFabButtonChild(
+                icon: Icons.add,
+                scale: 0.85,
+                title: Vingo.LocalizationsUtil.of(context).createANewCard,
+                // tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
+                //     " (" +
+                //     Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
+                //     ")",
+                onPressed: () {
+                  createCard(context);
+                },
+              ),
+            ],
+          ),
+        ),
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+              // statusBarColor: Colors.white,
+              // systemNavigationBarColor: Colors.white,
+              ),
+          child: bodyBuilder(context),
+        ),
       ),
     );
   }

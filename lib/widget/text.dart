@@ -18,15 +18,18 @@ class Text extends StatefulWidget {
   final int? maxLength;
   final double? fontSize;
   final MaxLengthEnforcement? maxLengthEnforcement;
+  final bool? enabled;
   final bool? autofocus;
   final bool? autocorrect;
   final bool? enableSuggestions;
   final bool? obscureText;
+  final bool? readOnly;
   final bool? enableInteractiveSelection;
   final int? changeDelayInMilliseconds;
   final ValueChanged<String>? onChange;
   final ValueChanged<String>? onDelayedChange;
   final ValueChanged<String>? onFieldSubmitted;
+  final VoidCallback? onEditingComplete;
   final VoidCallback? onTap;
   final VoidCallback? onConfirmDetected; // shortcut
   final VoidCallback? onCloseDetected; // shortcut
@@ -43,15 +46,18 @@ class Text extends StatefulWidget {
     this.maxLength,
     this.fontSize,
     this.maxLengthEnforcement = MaxLengthEnforcement.enforced,
+    this.enabled = true,
     this.autofocus = false,
     this.autocorrect = false,
     this.enableSuggestions = false,
     this.obscureText = false,
+    this.readOnly = false,
     this.enableInteractiveSelection = false,
     this.changeDelayInMilliseconds,
     this.onChange,
     this.onDelayedChange,
     this.onFieldSubmitted,
+    this.onEditingComplete,
     this.onTap,
     this.onConfirmDetected,
     this.onCloseDetected,
@@ -115,13 +121,16 @@ class _TextState extends State<Text> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   TextFormField(
+                    enabled: widget.enabled ?? true,
                     controller: widget.controller,
                     focusNode: widget.focuseNode,
                     autofocus: widget.autofocus ?? false,
                     autocorrect: widget.autocorrect ?? false,
                     enableSuggestions: widget.enableSuggestions ?? false,
                     obscureText: widget.obscureText ?? false,
-                    enableInteractiveSelection: widget.enableInteractiveSelection ?? false,
+                    readOnly: widget.readOnly ?? false,
+                    enableInteractiveSelection:
+                        widget.enableInteractiveSelection ?? false,
                     initialValue: widget.initialValue,
                     cursorColor: Vingo.ThemeUtil.of(context).inputCursorColor,
                     cursorWidth: 2.0,
@@ -130,51 +139,60 @@ class _TextState extends State<Text> {
                       fontSize: widget.fontSize ?? Vingo.ThemeUtil.textFontSize,
                     ),
                     decoration: InputDecoration(
-                      isDense: false,
-                      contentPadding: EdgeInsets.only(
-                        left: Vingo.ThemeUtil.padding,
-                        right: Vingo.ThemeUtil.padding,
-                        top: Vingo.ThemeUtil.padding,
-                        bottom: Vingo.ThemeUtil.padding,
-                      ),
-                      labelText: widget.labelText,
-                      hintText: widget.hintText,
-                      hintStyle: TextStyle(
-                        color: Vingo.ThemeUtil.of(context).textPrimaryColor.withAlpha(150),
-                      ),
-                      filled: true,
-                      fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
-                      focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
-                      hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(radius),
-                        borderSide: BorderSide(
-                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                          // width: 0.0,
+                        isDense: false,
+                        contentPadding: EdgeInsets.only(
+                          left: Vingo.ThemeUtil.padding,
+                          right: Vingo.ThemeUtil.padding,
+                          top: Vingo.ThemeUtil.padding,
+                          bottom: Vingo.ThemeUtil.padding,
                         ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(radius),
-                        borderSide: BorderSide(
-                          color:
-                              Vingo.ThemeUtil.of(context).inputFocusedBorderColor,
-                          // width: 0.0,
+                        labelText: widget.labelText,
+                        hintText: widget.hintText,
+                        hintStyle: TextStyle(
+                          color: Vingo.ThemeUtil.of(context)
+                              .textPrimaryColor
+                              .withAlpha(150),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(radius),
-                        borderSide: BorderSide(
-                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                          // width: 0.0,
+                        filled: true,
+                        // fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
+                        focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
+                        hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(radius),
+                          borderSide: BorderSide(
+                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                            // width: 0.0,
+                          ),
                         ),
-                      ),
-                    ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(radius),
+                          borderSide: BorderSide(
+                            color: Vingo.ThemeUtil.of(context)
+                                .inputFocusedBorderColor,
+                            // width: 0.0,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(radius),
+                          borderSide: BorderSide(
+                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                            // width: 0.0,
+                          ),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(radius),
+                          borderSide: BorderSide(
+                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                            // width: 0.0,
+                          ),
+                        )),
                     keyboardType: widget.keyboardType,
                     maxLines: widget.maxLines,
                     maxLength: widget.maxLength,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     onChanged: (value) {
-                      var td = Vingo.LocalizationsUtil.textDirectionByStr(value);
+                      var td =
+                          Vingo.LocalizationsUtil.textDirectionByStr(value);
                       if (td != textDirection) {
                         setState(() {
                           textDirection = td;
@@ -222,6 +240,9 @@ class _TextState extends State<Text> {
                     onFieldSubmitted: (value) {
                       widget.onFieldSubmitted?.call(value);
                       widget.onConfirmDetected?.call();
+                    },
+                    onEditingComplete: () {
+                      widget.onEditingComplete?.call();
                     },
                   ),
                 ],

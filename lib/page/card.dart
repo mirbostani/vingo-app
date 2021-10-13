@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,8 @@ class _CardPageState extends State<CardPage> {
   Vingo.Card? card;
   late Vingo.MarkdownEditingController frontController;
   late Vingo.MarkdownEditingController backController;
+  late ScrollController scrollController;
+  late ScrollController scrollControllerForPlainText;
 
   @override
   void initState() {
@@ -43,12 +46,17 @@ class _CardPageState extends State<CardPage> {
       frontController.text = card!.front;
       backController.text = card!.back ?? "";
     }
+
+    scrollController = ScrollController(keepScrollOffset: true);
+    scrollControllerForPlainText = ScrollController(keepScrollOffset: true);
   }
 
   @override
   void dispose() {
     frontController.dispose();
     backController.dispose();
+    scrollController.dispose();
+    scrollControllerForPlainText.dispose();
     super.dispose();
   }
 
@@ -95,7 +103,57 @@ class _CardPageState extends State<CardPage> {
 
   //----------------------------------------------------------------------------
 
-  Widget bodyBuilder(BuildContext context) {
+  Widget bodyBuilder(BuildContext context, bool plainTextEnabled) {
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.stylus,
+        },
+      ),
+      child: SingleChildScrollView(
+        // Forces scroll view to keep its position on tab switch
+        // key: !plainTextEnabled
+        //     ? PageStorageKey("markdown")
+        //     : PageStorageKey("plaintext"),
+        controller:
+            !plainTextEnabled ? scrollController : scrollControllerForPlainText,
+        physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(
+          left: Vingo.ThemeUtil.padding,
+          right: Vingo.ThemeUtil.padding,
+          top: Vingo.ThemeUtil.padding,
+          bottom: Vingo.ThemeUtil.padding,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Vingo.Markdown(
+              controller: frontController,
+              hintText: Vingo.LocalizationsUtil.of(context).cardFront,
+              enabled: plainTextEnabled,
+              padding: EdgeInsets.only(
+                bottom: Vingo.ThemeUtil.padding,
+              ),
+            ),
+            Vingo.Markdown(
+              controller: backController,
+              hintText: Vingo.LocalizationsUtil.of(context).cardBack,
+              enabled: plainTextEnabled,
+              padding: EdgeInsets.only(
+                bottom: Vingo.ThemeUtil.padding,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget androidBuilder(BuildContext context) {
     return Vingo.Shortcuts(
       autofocus: true,
       onCloseDetected: () {
@@ -111,81 +169,81 @@ class _CardPageState extends State<CardPage> {
       onSaveDetected: () {
         saveCard(context);
       },
-      child: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          left: Vingo.ThemeUtil.padding,
-          right: Vingo.ThemeUtil.padding,
-          bottom: Vingo.ThemeUtil.padding,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Vingo.Markdown(
-              controller: frontController,
-              hintText: Vingo.LocalizationsUtil.of(context).cardFront,
-              padding: EdgeInsets.only(
-                bottom: Vingo.ThemeUtil.padding,
+      child: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          // backgroundColor: Vingo.ThemeUtil.of(context).formBackgroundColor,
+          appBar: AppBar(
+            // backgroundColor: Vingo.ThemeUtil.of(context).formBackgroundColor,
+            title: Text(
+              widget.title ??
+                  (widget.card != null
+                      ? Vingo.LocalizationsUtil.of(context).viewCard
+                      : Vingo.LocalizationsUtil.of(context).createCard),
+              style: TextStyle(
+                color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
+                fontWeight: FontWeight.w800,
               ),
             ),
-            Vingo.Markdown(
-              controller: backController,
-              hintText: Vingo.LocalizationsUtil.of(context).cardBack,
-              padding: EdgeInsets.only(
-                bottom: Vingo.ThemeUtil.padding,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.save_outlined),
+                tooltip: Vingo.LocalizationsUtil.of(context).save +
+                    " (" +
+                    Vingo.LocalizationsUtil.of(context).saveShortcut +
+                    ")",
+                onPressed: () {
+                  saveCard(context);
+                },
               ),
+              IconButton(
+                icon: Icon(Icons.help_outline),
+                tooltip: Vingo.LocalizationsUtil.of(context).help +
+                    " (" +
+                    Vingo.LocalizationsUtil.of(context).helpShortcut +
+                    ")",
+                onPressed: () {
+                  showHelp(context);
+                },
+              ),
+            ],
+            bottom: TabBar(
+              indicatorColor:
+                  Vingo.ThemeUtil.of(context).progressIndicatorValueColor,
+              tabs: [
+                Tab(
+                  icon: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Vingo.ThemeUtil.of(context).iconColor,
+                  ),
+                ),
+                Tab(
+                  icon: Icon(
+                    Icons.code,
+                    color: Vingo.ThemeUtil.of(context).iconColor,
+                  ),
+                ),
+              ],
+              onTap: (value) {
+                if (value == 0) {
+                  // markdown view
+                  frontController.plainTextEnabled = false;
+                  backController.plainTextEnabled = false;
+                } else {
+                  // plain text view
+                  frontController.plainTextEnabled = true;
+                  backController.plainTextEnabled = true;
+                }
+              },
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget androidBuilder(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Vingo.ThemeUtil.of(context).formBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Vingo.ThemeUtil.of(context).formBackgroundColor,
-        title: Text(
-          widget.title ??
-              (widget.card != null
-                  ? Vingo.LocalizationsUtil.of(context).viewCard
-                  : Vingo.LocalizationsUtil.of(context).createCard),
-          style: TextStyle(
-            color: Vingo.ThemeUtil.of(context).appBarTitleTextColor,
-            fontWeight: FontWeight.w800,
+          ),
+          body: TabBarView(
+            children: [
+              bodyBuilder(context, false),
+              bodyBuilder(context, true),
+            ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save_outlined),
-            tooltip: Vingo.LocalizationsUtil.of(context).save +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).saveShortcut +
-                ")",
-            onPressed: () {
-              saveCard(context);
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.help_outline),
-            tooltip: Vingo.LocalizationsUtil.of(context).help +
-                " (" +
-                Vingo.LocalizationsUtil.of(context).helpShortcut +
-                ")",
-            onPressed: () {
-              showHelp(context);
-            },
-          ),
-        ],
-      ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-            // statusBarColor: Colors.white,
-            // systemNavigationBarColor: Colors.white,
-            ),
-        child: bodyBuilder(context),
       ),
     );
   }
