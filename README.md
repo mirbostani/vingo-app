@@ -4,6 +4,10 @@ A study helper application.
 
 ## Features
 
+### v1.0.8+12
+
+- Markdown Editor
+
 ### v1.0.8
 
 - Cards List
