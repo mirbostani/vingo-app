@@ -139,53 +139,54 @@ class _TextState extends State<Text> {
                       fontSize: widget.fontSize ?? Vingo.ThemeUtil.textFontSize,
                     ),
                     decoration: InputDecoration(
-                        isDense: false,
-                        contentPadding: EdgeInsets.only(
-                          left: Vingo.ThemeUtil.padding,
-                          right: Vingo.ThemeUtil.padding,
-                          top: Vingo.ThemeUtil.padding,
-                          bottom: Vingo.ThemeUtil.padding,
+                      isDense: false,
+                      contentPadding: EdgeInsets.only(
+                        left: Vingo.ThemeUtil.padding,
+                        right: Vingo.ThemeUtil.padding,
+                        top: Vingo.ThemeUtil.padding,
+                        bottom: Vingo.ThemeUtil.padding,
+                      ),
+                      labelText: widget.labelText,
+                      hintText: widget.hintText,
+                      hintStyle: TextStyle(
+                        color: Vingo.ThemeUtil.of(context)
+                            .textPrimaryColor
+                            .withAlpha(150),
+                      ),
+                      filled: true,
+                      // fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
+                      focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
+                      hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                          // width: 0.0,
                         ),
-                        labelText: widget.labelText,
-                        hintText: widget.hintText,
-                        hintStyle: TextStyle(
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
                           color: Vingo.ThemeUtil.of(context)
-                              .textPrimaryColor
-                              .withAlpha(150),
+                              .inputFocusedBorderColor,
+                          // width: 0.0,
                         ),
-                        filled: true,
-                        // fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
-                        focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
-                        hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                          borderSide: BorderSide(
-                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                            // width: 0.0,
-                          ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                          // width: 0.0,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                          borderSide: BorderSide(
-                            color: Vingo.ThemeUtil.of(context)
-                                .inputFocusedBorderColor,
-                            // width: 0.0,
-                          ),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(radius),
+                        borderSide: BorderSide(
+                          color: Vingo.ThemeUtil.of(context).inputBorderColor,
+                          // width: 0.0,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                          borderSide: BorderSide(
-                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                            // width: 0.0,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(radius),
-                          borderSide: BorderSide(
-                            color: Vingo.ThemeUtil.of(context).inputBorderColor,
-                            // width: 0.0,
-                          ),
-                        )),
+                      ),
+                    ),
                     keyboardType: widget.keyboardType,
                     maxLines: widget.maxLines,
                     maxLength: widget.maxLength,

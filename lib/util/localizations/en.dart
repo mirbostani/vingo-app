@@ -65,6 +65,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("More"),
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "paste": MessageLookupByLibrary.simpleMessage("Paste"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
         "deckName": MessageLookupByLibrary.simpleMessage("Deck Name"),

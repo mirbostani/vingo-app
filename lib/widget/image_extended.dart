@@ -1,9 +1,15 @@
-import 'dart:io' as IO;
+import 'dart:io' as Io;
 import 'package:flutter/foundation.dart'; // kIsWeb
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 import 'package:vingo/util/util.dart' as Vingo;
+
+enum ImageUrlType {
+  NONE,
+  LOCAL,
+  NETWORK,
+}
 
 class ImageExtended extends StatefulWidget {
   final String url;
@@ -28,6 +34,8 @@ class ImageExtended extends StatefulWidget {
 }
 
 class _ImageExtendedState extends State<ImageExtended> {
+  ImageUrlType urlType = ImageUrlType.NONE;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +47,14 @@ class _ImageExtendedState extends State<ImageExtended> {
   }
 
   Future<String> parseUrl() async {
+    String? imageFilePath = await Vingo.FileUtil.getImageFilePath(widget.url);
+    if (imageFilePath != null && await Vingo.FileUtil.exists(imageFilePath)) {
+      urlType = ImageUrlType.LOCAL;
+      return imageFilePath;
+    } else if (isURL(widget.url)) {
+      urlType = ImageUrlType.NETWORK;
+      return widget.url;
+    }
     return widget.url;
   }
 
@@ -80,46 +96,48 @@ class _ImageExtendedState extends State<ImageExtended> {
 
         Vingo.PlatformUtil.log("Loading image: ${snapshot.data}");
 
-        Widget image;
+        Widget? image;
         try {
-          image = Image.network(
-            snapshot.data!,
-            width: widget.width,
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Vingo.ThemeUtil.of(context)
-                        .progressIndicatorBackgroundColor,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Vingo.ThemeUtil.of(context).progressIndicatorValueColor,
+          if (urlType == ImageUrlType.LOCAL) {
+            image = Image.file(
+              Io.File(snapshot.data!),
+              width: widget.width,
+            );
+          } else if (urlType == ImageUrlType.NETWORK) {
+            image = Image.network(
+              snapshot.data!,
+              width: widget.width,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Vingo.ThemeUtil.of(context)
+                          .progressIndicatorBackgroundColor,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Vingo.ThemeUtil.of(context).progressIndicatorValueColor,
+                      ),
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? (loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!)
+                          : null,
                     ),
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? (loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!)
-                        : null,
                   ),
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                child: Center(
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    color: Vingo.ThemeUtil.of(context).textMutedColor,
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  child: Center(
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: Vingo.ThemeUtil.of(context).textMutedColor,
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-
-          // Widget image = Image.file(
-          //   IO.File(snapshot.data!),
-          //   width: widget.width,
-          // );
+                );
+              },
+            );
+          }
 
           if (widget.invert) {
             image = ColorFiltered(

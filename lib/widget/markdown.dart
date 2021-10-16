@@ -14,6 +14,7 @@ class Markdown extends StatefulWidget {
   final String? hintText;
   final bool? enabled;
   final EdgeInsets? padding;
+  final Ui.VoidCallback? onTap;
 
   const Markdown({
     Key? key,
@@ -21,6 +22,7 @@ class Markdown extends StatefulWidget {
     this.hintText,
     this.enabled = true,
     this.padding = EdgeInsets.zero,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -89,6 +91,7 @@ class _MarkdownState extends State<Markdown> {
             keyboardType: TextInputType.multiline,
             maxLines: null,
             onEditingComplete: () {},
+            onTap: widget.onTap,
           )
         ],
       ),
@@ -107,6 +110,8 @@ typedef MatchProcessCallback = InlineSpan Function(
 class MarkdownEditingController extends TextEditingController {
   bool plainTextEnabled = false;
   static const String inv = "\u200d"; // int 0x200d; or "\u200b" invisible char
+  static const String bullet = "\u2022";
+  static const String tab = "    ";
   late Map<int, int> offsets = <int, int>{};
 
   @override
@@ -139,6 +144,7 @@ class MarkdownEditingController extends TextEditingController {
       functions: <Function>[
         blockCode,
         blockImage,
+        blockList,
         inlineLink,
         inlineBoldItalicCode,
         inlineBoldItalic,
@@ -547,7 +553,6 @@ class MarkdownEditingController extends TextEditingController {
           ),
         );
 
-
         // Future.delayed(Duration.zero, () async {
         //   if (value.text.length == 39) {
         //     this.text += "x";
@@ -623,6 +628,171 @@ class MarkdownEditingController extends TextEditingController {
         // });
 
         return span;
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
+  List<InlineSpan> blockList({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return block(
+      context: context,
+      // pattern: RegExp(r"([ \t]*)(-|\d+\.)\s(\[ \]\s|\[[xX]\]\s){0,1}(.*?)(\r\n|\r|\n)"),
+      pattern: RegExp(r"([ \t]*)(-|\d+\.)\s(\[ \]\s|\[[xX]\]\s){0,1}(.*?)"),
+      matchProcess: (match, style) {
+        int length = ((match.group(1) ?? "").length / 2).round();
+        bool todo = match.group(3) != null;
+        bool checked = todo ? match.group(3)!.contains(RegExp(r'[xX]')) : false;
+        bool ordered = !match.group(2)!.contains("-");
+        return TextSpan(
+          children: [
+            TextSpan(
+              text: List.generate(length, (i) => tab).toList().join(),
+            ),
+            if (!todo && !ordered)
+              WidgetSpan(
+                child: Container(
+                  padding: EdgeInsets.only(
+                    right: 4.0,
+                  ),
+                  child: Transform.scale(
+                    scale: 1.3,
+                    child: Icon(
+                      Icons.arrow_right_rounded,
+                      color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            if (!todo && ordered)
+              WidgetSpan(
+                child: Container(
+                  padding: EdgeInsets.only(
+                    right: 4.0,
+                  ),
+                  child: Transform.scale(
+                    scale: 1.0,
+                    child: Text(
+                      match.group(2)!,
+                      style: TextStyle(
+                        color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (todo)
+              WidgetSpan(
+                child: Container(
+                  padding: EdgeInsets.only(
+                    right: 4.0,
+                  ),
+                  child: Transform.scale(
+                    scale: 1.0,
+                    child: Icon(
+                      checked ? Icons.check_box : Icons.check_box_outline_blank,
+                      color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            TextSpan(
+              children: run(
+                context: context,
+                functions: <Function>[
+                  blockCode,
+                  blockImage,
+                  blockList,
+                  inlineLink,
+                  inlineBoldItalicCode,
+                  inlineBoldItalic,
+                  inlineBoldCode,
+                  inlineItalicCode,
+                  inlineCode,
+                  inlineBold,
+                  inlineItalic,
+                ],
+                index: 0,
+                text: match.group(4)!,
+                style: style,
+              ),
+            ),
+
+            // WidgetSpan(
+            //   child: Row(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     children: [
+            //       Text(List.generate(length, (i) => tab).toList().join()),
+            //       if (!todo && !ordered)
+            //         Container(
+            //           padding: EdgeInsets.only(
+            //             right: 4.0,
+            //           ),
+            //           child: Icon(
+            //             Icons.arrow_right_rounded,
+            //             color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //           ),
+            //         ),
+            //       if (!todo && ordered)
+            //         Container(
+            //           padding: EdgeInsets.only(
+            //             right: 4.0,
+            //             top: 2.0,
+            //           ),
+            //           child: Transform.scale(
+            //             scale: 0.9,
+            //             child: Text(
+            //               match.group(2)!,
+            //               style: TextStyle(
+            //                 color:
+            //                     Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       if (todo)
+            //         Container(
+            //           padding: EdgeInsets.only(
+            //             right: 4.0,
+            //           ),
+            //           child: Transform.scale(
+            //             scale: 0.75,
+            //             child: Icon(
+            //               checked
+            //                   ? Icons.check_box
+            //                   : Icons.check_box_outline_blank,
+            //               color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //             ),
+            //           ),
+            //         ),
+            //       Flexible(
+            //         child: Container(
+            //           padding: EdgeInsets.only(
+            //             top: 2.0,
+            //           ),
+            //           child: Text(
+            //             match.group(4)!,
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            //   // alignment: Ui.PlaceholderAlignment.middle,
+            // ),
+            // TextSpan(
+            //   text: match.group(5),
+            // ),
+          ],
+          style: style,
+        );
       },
       text: text,
       style: style,

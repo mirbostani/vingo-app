@@ -345,6 +345,9 @@ class ThemeUtil {
           size: 20.0 * Vingo.StorageUtil.getTextScaleFactor(), // default: 24
         ),
       ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.all(darkButtonPrimaryColor),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           primary: darkButtonTextColor,
@@ -379,6 +382,9 @@ class ThemeUtil {
           color: lightAppBarNavIconColor,
           size: 20.0 * Vingo.StorageUtil.getTextScaleFactor(), // default: 24
         ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.all(lightButtonPrimaryColor),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(

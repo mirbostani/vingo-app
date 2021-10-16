@@ -1,3 +1,4 @@
+import 'dart:io' as Io;
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
@@ -30,6 +31,8 @@ class _CardPageState extends State<CardPage> {
   late Vingo.MarkdownEditingController backController;
   late ScrollController scrollController;
   late ScrollController scrollControllerForPlainText;
+  TextSelection? lastSelection;
+  String? lastField = "back"; // or "front"
 
   @override
   void initState() {
@@ -103,6 +106,40 @@ class _CardPageState extends State<CardPage> {
 
   //----------------------------------------------------------------------------
 
+  Future<void> pasteImage(BuildContext context) async {
+    if (!Io.Platform.isLinux) return;
+    String? fileName = await Vingo.ImageUtil.getImageFromClipboardLinux();
+    if (fileName == null) return;
+    String tag = "![clipboard]($fileName)";
+
+    switch (lastField) {
+      case "front":
+        if (lastSelection == null ||
+            lastSelection!.start < 0 ||
+            lastSelection!.end < 0) {
+          frontController.text += tag;
+          return;
+        }
+        String before = frontController.text.substring(0, lastSelection!.start);
+        String after = frontController.text.substring(lastSelection!.end);
+        frontController.text = "$before\n$tag\n$after";
+        break;
+      case "back":
+        if (lastSelection == null ||
+            lastSelection!.start < 0 ||
+            lastSelection!.end < 0) {
+          backController.text += tag;
+          return;
+        }
+        String before = backController.text.substring(0, lastSelection!.start);
+        String after = backController.text.substring(lastSelection!.end);
+        backController.text = "$before\n$tag\n$after";
+        break;
+    }
+  }
+
+  //----------------------------------------------------------------------------
+
   Widget bodyBuilder(BuildContext context, bool plainTextEnabled) {
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(
@@ -138,6 +175,13 @@ class _CardPageState extends State<CardPage> {
               padding: EdgeInsets.only(
                 bottom: Vingo.ThemeUtil.padding,
               ),
+              onTap: () {
+                lastField = "front";
+                lastSelection = TextSelection(
+                  baseOffset: frontController.selection.start,
+                  extentOffset: frontController.selection.end,
+                );
+              },
             ),
             Vingo.Markdown(
               controller: backController,
@@ -146,6 +190,13 @@ class _CardPageState extends State<CardPage> {
               padding: EdgeInsets.only(
                 bottom: Vingo.ThemeUtil.padding,
               ),
+              onTap: () {
+                lastField = "back";
+                lastSelection = TextSelection(
+                  baseOffset: backController.selection.start,
+                  extentOffset: backController.selection.end,
+                );
+              },
             ),
           ],
         ),
@@ -186,6 +237,30 @@ class _CardPageState extends State<CardPage> {
               ),
             ),
             actions: [
+              PopupMenuButton<String>(
+                icon: Icon(Icons.image),
+                tooltip: "Image tools",
+                itemBuilder: (BuildContext context) {
+                  return [
+                    // PopupMenuItem(
+                    //   value: "search",
+                    //   child: Text("Search"),
+                    // ),
+                    if (Io.Platform.isLinux)
+                      PopupMenuItem(
+                        value: "paste",
+                        child: Text(Vingo.LocalizationsUtil.of(context).paste),
+                      ),
+                  ];
+                },
+                onSelected: (value) async {
+                  switch (value) {
+                    case "paste":
+                      pasteImage(context);
+                      break;
+                  }
+                },
+              ),
               IconButton(
                 icon: Icon(Icons.save_outlined),
                 tooltip: Vingo.LocalizationsUtil.of(context).save +

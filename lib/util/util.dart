@@ -1,5 +1,6 @@
 export 'date_time.dart';
 export 'file.dart';
+export 'image.dart';
 export 'localizations.dart' show LocalizationsUtil;
 export 'platform.dart';
 export 'sqlite.dart';

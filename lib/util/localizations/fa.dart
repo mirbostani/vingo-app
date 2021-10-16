@@ -63,6 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("بیشتر"),
         "back": MessageLookupByLibrary.simpleMessage("قبل"),
         "search": MessageLookupByLibrary.simpleMessage("جستجو"),
+        "paste": MessageLookupByLibrary.simpleMessage("چسباندن"),
         "deck": MessageLookupByLibrary.simpleMessage("دسته"),
         "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
         "deckName": MessageLookupByLibrary.simpleMessage("نام دسته"),

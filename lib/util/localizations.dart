@@ -370,6 +370,10 @@ class LocalizationsUtil {
         "Search",
         name: "search",
       );
+  String get paste => Intl.Intl.message(
+        "Paste",
+        name: "paste",
+      );
   String get deck => Intl.Intl.message(
         "Deck",
         name: "deck",
