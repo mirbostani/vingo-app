@@ -171,7 +171,7 @@ class _CardPageState extends State<CardPage> {
             Vingo.Markdown(
               controller: frontController,
               hintText: Vingo.LocalizationsUtil.of(context).cardFront,
-              enabled: plainTextEnabled,
+              // enabled: plainTextEnabled,
               padding: EdgeInsets.only(
                 bottom: Vingo.ThemeUtil.padding,
               ),
@@ -186,7 +186,7 @@ class _CardPageState extends State<CardPage> {
             Vingo.Markdown(
               controller: backController,
               hintText: Vingo.LocalizationsUtil.of(context).cardBack,
-              enabled: plainTextEnabled,
+              // enabled: plainTextEnabled,
               padding: EdgeInsets.only(
                 bottom: Vingo.ThemeUtil.padding,
               ),
@@ -318,6 +318,11 @@ class _CardPageState extends State<CardPage> {
               bodyBuilder(context, true),
             ],
           ),
+          // bottomSheet: Container(
+          //   width: MediaQuery.of(context).size.width,
+          //   color: Colors.red,
+          //   child: Vingo.Timer(),
+          // ),
         ),
       ),
     );

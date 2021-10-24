@@ -161,7 +161,7 @@ class _TextDialogState extends State<TextDialog> {
                     onCloseDetected: () {
                       onDecline(context);
                     },
-                    child: Vingo.Text(
+                    child: Vingo.TextFieldExtended(
                       autofocus: true,
                       initialValue: currentValue,
                       labelText: widget.labelText,

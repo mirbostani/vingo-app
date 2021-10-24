@@ -283,7 +283,7 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
   //----------------------------------------------------------------------------
 
   Widget searchBuilder(BuildContext context) {
-    return Vingo.Text(
+    return Vingo.TextFieldExtended(
       focuseNode: searchFocusNode,
       controller: searchController,
       hintText: Vingo.LocalizationsUtil.of(context).search,
@@ -355,13 +355,18 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
                       enableDraggable: false,
                       // showDraggable: !(invisibleDraggableKey?.value == card.id),
                       level: 0,
-                      title: Text(card.front),
-                      leadingIcon: Icon(
-                        Icons.arrow_right,
-                        color: selectedIndex == index
-                            ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
-                            : Vingo.ThemeUtil.of(context).iconMutedColor,
+                      title: Text(
+                        card.front,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                        softWrap: false,
                       ),
+                      // leadingIcon: Icon(
+                      //   Icons.arrow_right,
+                      //   color: selectedIndex == index
+                      //       ? Vingo.ThemeUtil.of(context).buttonPrimaryColor
+                      //       : Vingo.ThemeUtil.of(context).iconMutedColor,
+                      // ),
                       tileColor: selectedIndex == index
                           ? Vingo.ThemeUtil.of(context).listTileBackgroundColor
                           : null,

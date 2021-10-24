@@ -4,8 +4,9 @@ A study helper application.
 
 ## Features
 
-### v1.0.8+13
+### v1.0.9+14
 
+- Deck Stats
 - Markdown Editor
 - Cards List
 - Card Context Menu

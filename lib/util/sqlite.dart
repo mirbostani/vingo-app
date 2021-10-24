@@ -17,6 +17,11 @@ enum OrderType {
   DESCENDING,
 }
 
+enum CardsOrderType {
+  IN_ORDER_ADDED,
+  IN_RANDOM_ORDER,
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 class SqliteUtil {
@@ -441,6 +446,7 @@ class Deck {
 
   static Future<Deck?> selectDeck({
     required int deckId,
+    bool countCards = true,
     String databaseName = SqliteUtil.defaultDatabaseName,
   }) async {
     Vingo.PlatformUtil.log("Seleting deck: deckId=$deckId");
@@ -456,7 +462,15 @@ class Deck {
       return null;
     }
     Deck deck = Deck.fromMap(maps[0]);
-    // TODO: Count cards
+
+    if (countCards) {
+      await deck.countStudyCards(
+        // tags: tags, // todo
+        databaseName: databaseName,
+      );
+      await deck.update(databaseName: databaseName);
+    }
+
     return deck;
   }
 
@@ -465,6 +479,7 @@ class Deck {
     int limit = 50,
     int offset = 0,
     OrderType orderByName = OrderType.ASCENDING,
+    bool countCards = true,
     String databaseName = SqliteUtil.defaultDatabaseName,
   }) async {
     Vingo.PlatformUtil.log("Selecting decks: name=$name");
@@ -511,7 +526,45 @@ class Deck {
       decks.removeLast();
     }
 
+    if (countCards) {
+      decks.items.forEach((deck) async {
+        bool isUpdated = await deck.countStudyCards(
+          // tags: tags, // todo
+          databaseName: databaseName,
+        );
+        if (isUpdated) {
+          await deck.update(databaseName: databaseName);
+        }
+      });
+    }
+
     return decks;
+  }
+
+  /// Count total number of decks.
+  /// @see `Cards.countCards`
+  static Future<Map<String, int>> countDecks({
+    required int collectionId,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    String sql = """
+    SELECT
+    total_decks.count AS total_decks_count
+    FROM
+    (SELECT COUNT(*) as count FROM $tableName) AS total_decks
+    """;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(sql);
+    Map<String, int> result = {
+      "total_decks_count": 0,
+    };
+    if (maps.length == 0) {
+      return result;
+    }
+    result['total_decks_count'] = maps[0]['total_decks_count'];
+    return result;
   }
 
   //----------------------------------------------------------------------------
@@ -543,15 +596,46 @@ class Deck {
   }
 
   Future<void> select({
+    bool countCards = true,
     String databaseName = SqliteUtil.defaultDatabaseName,
   }) async {
     if (this.id == null) return;
     Deck? deck = await Deck.selectDeck(
       deckId: this.id!,
+      countCards: countCards,
       databaseName: databaseName,
     );
     if (deck == null) return;
     this.fromDeck(deck);
+  }
+
+  Future<bool> countStudyCards({
+    List<String>? tags,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Map<String, int> result = await Card.countStudyCards(
+      deckId: this.id!,
+      tags: tags,
+      databaseName: databaseName,
+    );
+    bool isUpdated = false;
+    if (this.newCardsCount != result['new_cards_count']) {
+      this.newCardsCount = result['new_cards_count']!;
+      isUpdated = true;
+    }
+    if (this.reviewCardsCount != result['review_cards_count']) {
+      this.reviewCardsCount = result['review_cards_count']!;
+      isUpdated = true;
+    }
+    if (this.learningCardsCount != result['learning_cards_count']) {
+      this.learningCardsCount = result['learning_cards_count']!;
+      isUpdated = true;
+    }
+    if (this.totalCardsCount != result['total_cards_count']) {
+      this.totalCardsCount = result['total_cards_count']!;
+      isUpdated = true;
+    }
+    return isUpdated;
   }
 
   //----------------------------------------------------------------------------
@@ -586,12 +670,86 @@ class Deck {
 
   //----------------------------------------------------------------------------
 
+  set totalCardsCount(int value) {
+    setSetting('total_cards_count', value);
+  }
+
+  int get totalCardsCount {
+    return getSetting('total_cards_count') ?? 0;
+  }
+
+  set newCardsCount(int value) {
+    setSetting('new_cards_count', value);
+  }
+
+  int get newCardsCount {
+    return getSetting('new_cards_count') ?? 0;
+  }
+
+  set reviewCardsCount(int value) {
+    setSetting('review_cards_count', value);
+  }
+
+  int get reviewCardsCount {
+    return getSetting('review_cards_count') ?? 0;
+  }
+
+  set learningCardsCount(int value) {
+    setSetting('learning_cards_count', value);
+  }
+
+  int get learningCardsCount {
+    return getSetting('learning_cards_count') ?? 0;
+  }
+
+  set autoplayPronunciationEnabled(bool value) {
+    setSetting('autoplay_pronunciation_enabled', value);
+  }
+
+  bool get autoplayPronunciationEnabled {
+    return getSetting('autoplay_pronunciation_enabled') ?? false;
+  }
+
   set spellCheckEnabled(bool value) {
     setSetting('spell_check_enabled', value);
   }
 
   bool get spellCheckEnabled {
     return getSetting('spell_check_enabled') ?? false;
+  }
+
+  set newCardsOrderId(int value) {
+    setSetting('new_cards_order_id', value);
+  }
+
+  int get newCardsOrderId {
+    return getSetting('new_cards_order_id') ?? 0; // 0 is 'in order added'
+  }
+
+  set newCardsPerDay(int value) {
+    value = value < 0 ? 0 : (value > 9999 ? 9999 : value);
+    setSetting('new_cards_per_day', value);
+  }
+
+  int get newCardsPerDay {
+    return getSetting('new_cards_per_day') ?? 25;
+  }
+
+  // set reviewsOrderId(int value) {
+  //   setSetting('reviews_order_id', value);
+  // }
+
+  // int get reviewsOrderId {
+  //   return getSetting('reviews_order_id') ?? 0; // 0 is 'in order added'
+  // }
+
+  set reviewsPerDay(int value) {
+    value = value < 0 ? 0 : (value > 9999 ? 9999 : value);
+    setSetting('reviews_per_day', value);
+  }
+
+  int get reviewsPerDay {
+    return getSetting('reviews_per_day') ?? 100;
   }
 }
 
@@ -1032,6 +1190,385 @@ class Card {
     }
 
     return cards;
+  }
+
+  static String _prepareTagsWhere({
+    List<String>? tags,
+  }) {
+    String where = "";
+    if (tags != null && tags.length > 0) {
+      tags = tags.where((element) => element.trim().isNotEmpty).toList();
+    }
+    if (tags != null && tags.length > 0) {
+      String frontWhere = "";
+      String backWhere = "";
+      for (int i = 0; i < tags.length; i++) {
+        frontWhere +=
+            "front LIKE '%${tags[i]}%'" + (i != tags.length - 1 ? " OR " : "");
+        backWhere +=
+            "back LIKE '%${tags[i]}%'" + (i != tags.length - 1 ? " OR " : "");
+      }
+      where += "($frontWhere OR $backWhere)";
+    }
+    return where;
+  }
+
+  static Future<Map<String, int>> countStudyCards({
+    required int deckId,
+    List<String>? tags,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+
+    String where = "";
+    String tagsWhere = _prepareTagsWhere(tags: tags);
+    if (tagsWhere.isNotEmpty) {
+      where = "AND $tagsWhere";
+    }
+
+    String sql = """
+    SELECT 
+    new_cards.count AS new_cards_count, 
+    review_cards.count AS review_cards_count,
+    learning_cards.count AS learning_cards_count,
+    total_cards.count AS total_cards_count
+    FROM
+    (SELECT COUNT(*) as count FROM $tableName WHERE deck_id = $deckId AND due_at = 0 $where) AS new_cards,
+    (SELECT COUNT(*) as count FROM $tableName WHERE deck_id = $deckId AND due_at > 0 AND due_at < ${Vingo.DateTimeUtil.getSecondsSinceEpoch()} $where) AS review_cards,
+    (SELECT COUNT(*) as count FROM $tableName WHERE deck_id = $deckId AND due_at = -1 $where) AS learning_cards,
+    (SELECT COUNT(*) as count FROM $tableName WHERE deck_id = $deckId $where) AS total_cards
+    """;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(sql);
+    Map<String, int> result = {
+      "new_cards_count": 0,
+      "review_cards_count": 0,
+      "learning_cards_count": 0,
+      "total_cards_count": 0,
+    };
+    if (maps.length == 0) {
+      return result;
+    }
+    result['new_cards_count'] = maps[0]['new_cards_count'];
+    result['review_cards_count'] = maps[0]['review_cards_count'];
+    result['learning_cards_count'] = maps[0]['learning_cards_count'];
+    result['total_cards_count'] = maps[0]['total_cards_count'];
+    return result;
+  }
+
+  static Future<int> countAssetUsage({
+    required String assetName, // e.g. "image.png"
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      "SELECT COUNT(*) AS count FROM cards WHERE back LIKE '%$assetName%' OR front LIKE '%$assetName%'",
+    );
+    return maps[0]['count'];
+  }
+
+  static Future<int> countAllCards({
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT COUNT(*) as count FROM $tableName");
+    if (maps.length == 0) {
+      return -1;
+    }
+    return maps[0]['count'];
+  }
+
+  static Future<List<Card>> selectNewCards({
+    int? deckId,
+    required int newCardsPerDay,
+    List<String>? tags,
+    CardsOrderType? newCardsOrderType,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    Vingo.PlatformUtil.log("[Sqlite] Selecting new cards");
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+
+    String tagsWhere = _prepareTagsWhere(tags: tags);
+
+    final List<Map<String, dynamic>> maps = await db.query(tableName,
+        where: "deck_id = ? AND due_at = 0" +
+            (tagsWhere.isNotEmpty ? " AND $tagsWhere" : ""),
+        whereArgs: [deckId],
+        limit: newCardsPerDay); // new cards due is 0
+    // List<Card> cards = List.generate(
+    //   maps.length,
+    //   (i) => Card.fromMap(maps[i]),
+    // );
+    List<Card> cards = <Card>[];
+    for (int i = 0; i < maps.length; i++) {
+      cards.add(Card.fromMap(maps[i]));
+    }
+    switch (newCardsOrderType) {
+      case CardsOrderType.IN_RANDOM_ORDER:
+        cards.shuffle();
+        break;
+      case CardsOrderType.IN_ORDER_ADDED:
+      default:
+        // do nothing
+        break;
+    }
+    return cards;
+  }
+
+  static Future<List<Card>> selectReviewCards({
+    required int deckId,
+    required int reviewsPerDay,
+    List<String>? tags,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+
+    String tagsWhere = _prepareTagsWhere(tags: tags);
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: "deck_id = ? AND due_at > 0 AND due_at < ?" +
+          (tagsWhere.isNotEmpty ? " AND $tagsWhere" : ""),
+      whereArgs: [deckId, Vingo.DateTimeUtil.getSecondsSinceEpoch()],
+      limit: reviewsPerDay,
+    );
+    // return List.generate(maps.length, (i) => Card.fromMap(maps[i]));
+    List<Card> cards = <Card>[];
+    for (int i = 0; i < maps.length; i++) {
+      cards.add(Card.fromMap(maps[i]));
+    }
+    return cards;
+  }
+
+  static Future<List<Card>> selectLearningCards({
+    required int deckId,
+    List<String>? tags,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+
+    String tagsWhere = _prepareTagsWhere(tags: tags);
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: "deck_id = ? AND due_at = -1" +
+          (tagsWhere.isNotEmpty ? " AND $tagsWhere" : ""),
+      whereArgs: [deckId],
+    );
+    // return List.generate(maps.length, (i) => Card.fromMap(maps[i]));
+    List<Card> cards = <Card>[];
+    for (int i = 0; i < maps.length; i++) {
+      cards.add(Card.fromMap(maps[i]));
+    }
+    return cards;
+  }
+
+  //----------------------------------------------------------------------------
+
+  /// Update easiness factor (EF) of the card based on the answered easiness
+  /// quality.
+  ///
+  /// @param easinessQuality - Answer easiness quality
+  ///
+  /// SM2 Algorithm:
+  ///
+  /// 1. Split the knowledge into smallest possible items.
+  ///
+  /// 2. With all items associate an E-Factor equal to 2.5.
+  ///
+  /// 3. Repeat items using the following intervals:
+  ///    I(1):=1
+  ///    I(2):=6
+  ///    for n>2: I(n):=I(n-1)*EF
+  ///    where:
+  ///    I(n) - inter-repetition interval after the n-th repetition (in
+  ///           days)
+  ///    EF - E-Factor of a given item
+  ///    If interval is a fraction, round it up to the nearest integer
+  ///
+  /// 4. After each repetition assess the quality of repetition response
+  ///    in 0-5 grade scale:
+  ///    5 - perfect response
+  ///    4 - correct response after a hesitation
+  ///    3 - correct response recalled with serious difficulty
+  ///    2 - incorrect response; where the correct one seemed easy to recall
+  ///    1 - incorrect response; the correct one remembered
+  ///    0 - complete blackout.
+  ///
+  /// 5. After each repetition modify the E-Factor of the recently repeated
+  ///    item according to the formula:
+  ///    EF':=EF+(0.1-(5-q)*(0.08+(5-q)*0.02))
+  ///    where:
+  ///    EF' - new value of the E-Factor
+  ///    EF - old value of the E-Factor
+  ///    q - quality of the response in the 0-5 grade scale
+  ///    If EF is less than 1.3 then let EF be 1.3
+  ///
+  /// 6. If the quality response was lower than 3 then start repetitions
+  ///    for the item from the beginning without changing the E-Factor
+  ///    (i.e. use intervals I(1), I(2) etc. as if the item was memorized
+  ///    anew).
+  ///
+  /// 7. After each repetition session of a given day repeat again all
+  ///    items that scored below four in the quality assessment. Continue
+  ///    the repetitions until all of these items score at least four.
+  void updateSRS(int easinessQuality) {
+    Vingo.PlatformUtil.log("""
+    Updating SRS:
+      easiness_quality: $easinessQuality
+      interval: $interval
+      iteration: $iteration
+      easiness_factor: $easinessFactor
+      due_at: $dueAt
+    """);
+
+    if (interval == null || easinessFactor == null || iteration == null) {
+      return;
+    }
+
+    double ef = easinessFactor!;
+    // (5-q)
+    int k = easinessQualityMax - easinessQuality;
+    // EF':=EF+(0.1-(5-q)*(0.08+(5-q)*0.02))
+    // q = 5, delta_EF = 0.1
+    // q = 4, delta_EF = 0.0
+    // q = 3, delta_EF = -0.139
+    // q = 2, delta_EF = -0.320 Start iteration from the beginning if q < 3
+    // q = 1, delta_EF = -0.540
+    // q = 0, delta_EF = -0.799
+    ef += 0.1 - k * (0.08 + k * 0.02);
+    // Easiness factor should not be less than 1.3 (hardest)
+    ef = ef < easinessFactorMin ? easinessFactorMin : ef;
+
+    // Do not change ef if reponse quality is less than 3.
+    if (easinessQuality < 3) {
+      iteration = iteration1; // n=1
+      interval = interval1; // I(n)=I(1)=1 day
+      dueAt = -1;
+
+      Vingo.PlatformUtil.log("""
+      Updated:
+        easiness_quality: $easinessQuality
+        interval: $interval
+        iteration: $iteration
+        easiness_factor: $easinessFactor
+        due_at: $dueAt
+      """);
+
+      return;
+    }
+
+    // Calculate next interval
+    if (iteration == 1) {
+      // First iteration is initialized by 1 (24h). Do nothing.
+      // interval = _interval1; // I(n)=I(1)=1 day
+    } else if (iteration == 2) {
+      // interval = _interval2; // I(2)=6
+
+      // @update
+      if (easinessFactor == 5) {
+        interval = interval2; // I(2)=6
+      } else if (easinessFactor == 4) {
+        interval = interval2 - 1; // I(2)=5
+      } else if (easinessFactor == 3) {
+        interval = interval2 - 2; // I(2)=4
+      }
+    } else if (iteration! > 2) {
+      interval = interval! * ef; // I(n):=I(n-1)*EF
+    }
+    iteration = iteration! + 1;
+    easinessFactor = ef;
+
+    // Update due datetime based on interval
+    dueAt = Vingo.DateTimeUtil.getSecondsSinceEpoch() +
+        (interval! * 24 * 60 * 60).toInt();
+
+    Vingo.PlatformUtil.log("[Sqlite] Updated: interval: $interval");
+    Vingo.PlatformUtil.log("[Sqlite] Updated: iteration: $iteration");
+    Vingo.PlatformUtil.log("[Sqlite] Updated: easinessFactor: $easinessFactor");
+    Vingo.PlatformUtil.log("[Sqlite] Updated: dueAt: $dueAt");
+
+    Vingo.PlatformUtil.log("""
+    Updated:
+      easiness_quality: $easinessQuality
+      interval: $interval
+      iteration: $iteration
+      easiness_factor: $easinessFactor
+      due_at: $dueAt
+    """);
+  }
+
+  Future<int> scheduleInDays({
+    required int days,
+    bool resetStudyCycle = false,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    if (resetStudyCycle) {
+      iteration = iteration1;
+      interval = interval1;
+      easinessFactor = easinessFactorEntryValue;
+    }
+    // 10 seconds shift to left is required for refresh stats to work properly
+    this.dueAt = Vingo.DateTimeUtil.getSecondsSinceEpoch() +
+        (days * 24 * 60 * 60).toInt() -
+        10;
+    this.updatedAt = Vingo.DateTimeUtil.getSecondsSinceEpoch();
+    return await Card.updateCard(card: this, databaseName: databaseName);
+  }
+
+  static Future<dynamic> scheduleCardsByIdInDays({
+    required List<int> cardIds,
+    required int days,
+    bool resetStudyCycle = false,
+    String databaseName = SqliteUtil.defaultDatabaseName,
+  }) async {
+    final Sqflite.Database db = await SqliteUtil.getInstance(
+      databaseName: databaseName,
+    ).database;
+    Sqflite.Batch batch = db.batch();
+    int updatedAt = Vingo.DateTimeUtil.getSecondsSinceEpoch();
+    // 10 seconds shift to left is required for refresh stats to work properly
+    int dueAt = Vingo.DateTimeUtil.getSecondsSinceEpoch() +
+        (days * 24 * 60 * 60).toInt() -
+        10;
+    int iteration = iteration1;
+    double interval = interval1;
+    double easinessFactor = easinessFactorEntryValue;
+    cardIds.forEach((cardId) {
+      String sql = "";
+      if (resetStudyCycle) {
+        sql = """
+        UPDATE $tableName
+        SET due_at = $dueAt, 
+            iteration = $iteration, 
+            interval = $interval,
+            easiness_factor = $easinessFactor,
+            updated_at = $updatedAt
+        WHERE id = $cardId 
+        """;
+      } else {
+        sql = """
+        UPDATE $tableName
+        SET due_at = $dueAt,
+            updated_at = $updatedAt
+        WHERE id = $cardId
+        """;
+      }
+      batch.execute(sql);
+    });
+    return await batch.commit(noResult: true);
   }
 
   //----------------------------------------------------------------------------

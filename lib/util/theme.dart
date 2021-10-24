@@ -29,6 +29,14 @@ class ThemeUtil {
   static const double textFontSize = 16.0;
   static const double textFontSizeMedium = 20.0;
   static const double textFontSizeLarge = 32.0;
+  static const List<double> headingFontSize = <double>[
+    textFontSizeLarge, // 32.0
+    28.0,
+    24.0,
+    textFontSizeMedium, // 20.0
+    18.0,
+    textFontSize, // 16.0
+  ];
 
   static const double fieldHeight = 40.0;
   static const double fabIconSizeTiny = 12.0;
@@ -217,6 +225,16 @@ class ThemeUtil {
   // Switch
   static Color lightSwitchActiveColor = lightPrimaryColor;
   static Color darkSwitchActiveColor = darkPrimaryColor;
+
+  // Stats
+  static Color lightStatTotalColor = Colors.grey[700]!; // 500
+  static Color darkStatTotalColor = Colors.grey[400]!;
+  static Color lightStatNewColor = Colors.blue[600]!; // 200
+  static Color darkStatNewColor = Colors.lightBlue[600]!;
+  static Color lightStatReviewColor = Colors.green[400]!; // 200
+  static Color darkStatReviewColor = Colors.lightGreen;
+  static Color lightStatLearningColor = Colors.red[400]!; // 200
+  static Color darkStatLearningColor = Colors.red[600]!;
 
   // Fonts
   static String font = "Roboto";
@@ -631,5 +649,24 @@ class ThemeUtil {
   Color get switchActiveColor => getColor(
         lightSwitchActiveColor,
         darkSwitchActiveColor,
+      );
+
+  // Stats
+
+  Color get statTotalColor => getColor(
+        lightStatTotalColor,
+        darkStatTotalColor,
+      );
+  Color get statNewColor => getColor(
+        lightStatNewColor,
+        darkStatNewColor,
+      );
+  Color get statReviewColor => getColor(
+        lightStatReviewColor,
+        darkStatReviewColor,
+      );
+  Color get statLearningColor => getColor(
+        lightStatLearningColor,
+        darkStatLearningColor,
       );
 }

@@ -1,5 +1,6 @@
 export 'android_drawer.dart';
 export 'app_license.dart';
+export 'circular_study_indicator.dart';
 export 'button.dart';
 export 'context_menu.dart';
 export 'dialog.dart';
@@ -7,7 +8,8 @@ export 'draggable_list_tile.dart';
 export 'image_extended.dart';
 export 'text_dialog.dart';
 export 'markdown.dart';
-export 'text.dart';
+export 'text_field_extended.dart';
+export 'timer.dart';
 export 'messenger.dart';
 export 'multiple_fab_button.dart';
 export 'platform.dart';

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
 
-class Text extends StatefulWidget {
+class TextFieldExtended extends StatefulWidget {
   final TextEditingController? controller;
   final FocusNode? focuseNode;
   final String? initialValue;
@@ -24,6 +24,7 @@ class Text extends StatefulWidget {
   final bool? enableSuggestions;
   final bool? obscureText;
   final bool? readOnly;
+  final bool? enableWordsCounter;
   final bool? enableInteractiveSelection;
   final int? changeDelayInMilliseconds;
   final ValueChanged<String>? onChange;
@@ -34,7 +35,7 @@ class Text extends StatefulWidget {
   final VoidCallback? onConfirmDetected; // shortcut
   final VoidCallback? onCloseDetected; // shortcut
 
-  const Text({
+  const TextFieldExtended({
     Key? key,
     this.controller,
     this.focuseNode,
@@ -52,6 +53,7 @@ class Text extends StatefulWidget {
     this.enableSuggestions = false,
     this.obscureText = false,
     this.readOnly = false,
+    this.enableWordsCounter = false,
     this.enableInteractiveSelection = false,
     this.changeDelayInMilliseconds,
     this.onChange,
@@ -64,17 +66,22 @@ class Text extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TextState createState() => _TextState();
+  _TextFieldExtendedState createState() => _TextFieldExtendedState();
 }
 
-class _TextState extends State<Text> {
+class _TextFieldExtendedState extends State<TextFieldExtended> {
   static const double radius = 4.0;
   Ui.TextDirection textDirection = Ui.TextDirection.ltr;
   Async.Timer? changeDelayTimer;
+  static int wordsCount = 0;
+  static RegExp wordsCountRegExp = RegExp(r"[\w-]+");
 
   @override
   void initState() {
     super.initState();
+    if (widget.controller != null) {
+      wordsCount = wordsCountRegExp.allMatches(widget.controller!.text).length;
+    }
   }
 
   @override
@@ -244,6 +251,26 @@ class _TextState extends State<Text> {
                     },
                     onEditingComplete: () {
                       widget.onEditingComplete?.call();
+                    },
+                    buildCounter: (
+                      context, {
+                      required currentLength,
+                      required isFocused,
+                      maxLength,
+                    }) {
+                      if (widget.enableInteractiveSelection == true &&
+                          widget.controller != null) {
+                        wordsCount = wordsCountRegExp
+                            .allMatches(widget.controller!.text)
+                            .length;
+                        return Text(
+                          "words: $wordsCount",
+                          style: TextStyle(
+                            fontSize: Vingo.ThemeUtil.textFontSizeSmall,
+                          ),
+                        );
+                      }
+                      return null;
                     },
                   ),
                 ],

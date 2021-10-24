@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -5,16 +7,22 @@ import 'package:vingo/page/home.dart' as Vingo;
 import 'package:vingo/page/decks.dart' as Vingo;
 import 'package:vingo/page/settings.dart' as Vingo;
 import 'package:vingo/widget/android_drawer.dart' as Vingo;
+import 'package:vingo/util/commandline.dart' as Vingo;
 import 'package:vingo/util/localizations.dart' as Vingo;
 import 'package:vingo/util/theme.dart' as Vingo;
 import 'package:vingo/util/storage.dart' as Vingo;
 import 'package:vingo/util/sqlite.dart' as Vingo;
 import 'package:vingo/util/platform.dart' as Vingo;
 
-void main() async {
+void main(List<String> arguments) async {
+  if (arguments.length > 0) {
+    await Vingo.Commandline(arguments: arguments).parse();
+    exit(0);
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
-  await Vingo.StorageUtil.init();
   await Vingo.SqliteUtil.getInstance().open();
+  await Vingo.StorageUtil.init();
   await Vingo.PlatformUtil.setWindowSize(
     size: Vingo.StorageUtil.getWindowSize(),
   );

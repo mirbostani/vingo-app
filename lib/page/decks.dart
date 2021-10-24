@@ -183,7 +183,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
       context,
       MaterialPageRoute(
         builder: (context) => Vingo.DeckPage(
-          title: deck.name,
+          title: "${deck.name} (${deck.totalCardsCount})",
           deck: deck,
         ),
       ),
@@ -252,7 +252,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
   //----------------------------------------------------------------------------
 
   Widget searchBuilder(BuildContext context) {
-    return Vingo.Text(
+    return Vingo.TextFieldExtended(
       focuseNode: searchFocusNode,
       controller: searchController,
       hintText: Vingo.LocalizationsUtil.of(context).search,
@@ -326,7 +326,12 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                           Vingo.ThemeUtil.of(context).listTileBackgroundColor,
                       child: ListTile(
                         dense: false,
-                        title: Text(deck.name),
+                        title: Text(
+                          deck.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                        ),
                         selected: selectedIndex == index,
                         // leading: Row(
                         //   mainAxisSize: MainAxisSize.min,
@@ -339,6 +344,57 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(
+                                "${deck.newCardsCount + deck.reviewCardsCount + deck.learningCardsCount}/${deck.totalCardsCount}",
+                                style: TextStyle(
+                                  color: Vingo.ThemeUtil.of(context)
+                                      .statTotalColor,
+                                  fontSize: Vingo.ThemeUtil.textFontSizeSmall,
+                                ),
+                              ),
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(2.0),
+                            //   child: Text(
+                            //     deck.newCardsCount.toString(),
+                            //     style: TextStyle(
+                            //       color: Vingo.ThemeUtil.of(context).statNewColor,
+                            //     ),
+                            //   ),
+                            // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(2.0),
+                            //   child: Text(
+                            //     deck.learningCardsCount.toString(),
+                            //     style: TextStyle(
+                            //       color: Vingo.ThemeUtil.of(context).statLearningColor,
+                            //     ),
+                            //   ),
+                            // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(2.0),
+                            //   child: Text(
+                            //     deck.reviewCardsCount.toString(),
+                            //     style: TextStyle(
+                            //         color: Vingo.ThemeUtil.of(context).statReviewColor),
+                            //   ),
+                            // ),
+                            Container(
+                              width: 8.0,
+                            ),
+                            Vingo.CircularStudyIndicator(
+                              width: 20,
+                              height: 20,
+                              totalCardsCount: deck.totalCardsCount,
+                              newCardsCount: deck.newCardsCount,
+                              learningCardsCount: deck.learningCardsCount,
+                              reviewCardsCount: deck.reviewCardsCount,
+                            ),
+                            Container(
+                              width: 8.0,
+                            ),
                             IconButton(
                               icon: Icon(Icons.more_horiz),
                               iconSize: Vingo.ThemeUtil.iconSizeSmall,

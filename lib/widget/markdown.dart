@@ -70,7 +70,7 @@ class _MarkdownState extends State<Markdown> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Vingo.Text(
+          Vingo.TextFieldExtended(
             // EditableText(
             //   style: TextStyle(
             //     // color: Colors.black,
@@ -88,6 +88,7 @@ class _MarkdownState extends State<Markdown> {
             autofocus: true,
             autocorrect: false,
             enableInteractiveSelection: true,
+            enableWordsCounter: true,
             keyboardType: TextInputType.multiline,
             maxLines: null,
             onEditingComplete: () {},
@@ -109,8 +110,11 @@ typedef MatchProcessCallback = InlineSpan Function(
 
 class MarkdownEditingController extends TextEditingController {
   bool plainTextEnabled = false;
-  static const String inv = "\u200d"; // int 0x200d; or "\u200b" invisible char
+  static const String inv = "\ufeff"; // 0x200d, 0x200b, 0xfeff
   static const String bullet = "\u2022";
+  static const String rightArrow = "\u279c";
+  static const String box = "\u2610";
+  static const String boxChecked = "\u2612";
   static const String tab = "    ";
   late Map<int, int> offsets = <int, int>{};
 
@@ -131,8 +135,10 @@ class MarkdownEditingController extends TextEditingController {
     if (plainTextEnabled) {
       return TextSpan(
         text: this.text,
-        style: TextStyle(
-          fontFamily: Vingo.ThemeUtil.codeFont,
+        style: style?.merge(
+          TextStyle(
+            fontFamily: Vingo.ThemeUtil.codeFont,
+          ),
         ),
       );
     }
@@ -144,6 +150,7 @@ class MarkdownEditingController extends TextEditingController {
       functions: <Function>[
         blockCode,
         blockImage,
+        blockHeading,
         blockList,
         inlineLink,
         inlineBoldItalicCode,
@@ -155,7 +162,7 @@ class MarkdownEditingController extends TextEditingController {
         inlineItalic,
       ],
       index: 0,
-      text: text,
+      text: this.text,
       style: style,
     );
     return TextSpan(
@@ -197,16 +204,21 @@ class MarkdownEditingController extends TextEditingController {
       context: context,
       text: text,
       style: style,
-      process: (text, style) {
+      process: (text, innerStyle) {
         if (index >= functions.length - 1) {
-          return <InlineSpan>[TextSpan(text: text, style: style)];
+          return <InlineSpan>[
+            TextSpan(
+              text: text,
+              style: innerStyle, //?.merge(style),
+            )
+          ];
         }
         return run(
           context: context,
           functions: functions,
           index: index + 1,
           text: text,
-          style: style,
+          style: innerStyle, //?.merge(style),
         );
       },
     );
@@ -226,10 +238,12 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv${match.group(1)}$inv$inv$inv",
-          style: style!.merge(TextStyle(
-            fontStyle: Ui.FontStyle.italic,
-            fontWeight: Ui.FontWeight.bold,
-          )),
+          style: style!.merge(
+            TextStyle(
+              fontStyle: Ui.FontStyle.italic,
+              fontWeight: Ui.FontWeight.bold,
+            ),
+          ),
         );
       },
       text: text,
@@ -250,9 +264,11 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv${match.group(1)}$inv$inv",
-          style: style!.merge(TextStyle(
-            fontWeight: Ui.FontWeight.bold,
-          )),
+          style: style!.merge(
+            TextStyle(
+              fontWeight: Ui.FontWeight.bold,
+            ),
+          ),
         );
       },
       text: text,
@@ -273,9 +289,11 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv${match.group(1)}$inv",
-          style: style!.merge(TextStyle(
-            fontStyle: Ui.FontStyle.italic,
-          )),
+          style: style!.merge(
+            TextStyle(
+              fontStyle: Ui.FontStyle.italic,
+            ),
+          ),
         );
       },
       text: text,
@@ -328,12 +346,14 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv$inv${match.group(1)}$inv$inv$inv$inv",
-          style: style!.merge(TextStyle(
-            backgroundColor: Colors.grey.withAlpha(100),
-            fontFamily: Vingo.ThemeUtil.codeFont,
-            fontStyle: Ui.FontStyle.italic,
-            fontWeight: Ui.FontWeight.bold,
-          )),
+          style: style!.merge(
+            TextStyle(
+              backgroundColor: Colors.grey.withAlpha(100),
+              fontFamily: Vingo.ThemeUtil.codeFont,
+              fontStyle: Ui.FontStyle.italic,
+              fontWeight: Ui.FontWeight.bold,
+            ),
+          ),
         );
       },
       text: text,
@@ -354,11 +374,13 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv$inv${match.group(1)}$inv$inv$inv",
-          style: style!.merge(TextStyle(
-            backgroundColor: Colors.grey.withAlpha(100),
-            fontFamily: Vingo.ThemeUtil.codeFont,
-            fontWeight: Ui.FontWeight.bold,
-          )),
+          style: style!.merge(
+            TextStyle(
+              backgroundColor: Colors.grey.withAlpha(100),
+              fontFamily: Vingo.ThemeUtil.codeFont,
+              fontWeight: Ui.FontWeight.bold,
+            ),
+          ),
         );
       },
       text: text,
@@ -379,11 +401,13 @@ class MarkdownEditingController extends TextEditingController {
       matchProcess: (match, style) {
         return TextSpan(
           text: "$inv$inv${match.group(1)}$inv$inv",
-          style: style!.merge(TextStyle(
-            backgroundColor: Colors.grey.withAlpha(100),
-            fontFamily: Vingo.ThemeUtil.codeFont,
-            fontStyle: Ui.FontStyle.italic,
-          )),
+          style: style!.merge(
+            TextStyle(
+              backgroundColor: Colors.grey.withAlpha(100),
+              fontFamily: Vingo.ThemeUtil.codeFont,
+              fontStyle: Ui.FontStyle.italic,
+            ),
+          ),
         );
       },
       text: text,
@@ -497,12 +521,12 @@ class MarkdownEditingController extends TextEditingController {
                     Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        color: Colors.black.withAlpha(120),
+                        color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
                         borderRadius: BorderRadius.only(
                           topLeft:
-                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                              Radius.circular(Vingo.ThemeUtil.borderRadiusHalf),
                           topRight:
-                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                              Radius.circular(Vingo.ThemeUtil.borderRadiusHalf),
                         ),
                       ),
                       padding: EdgeInsets.only(
@@ -514,18 +538,20 @@ class MarkdownEditingController extends TextEditingController {
                       child: Text(match.group(1) ?? "",
                           style: TextStyle(
                             fontSize: Vingo.ThemeUtil.textFontSizeSmall,
-                            color: Colors.white,
+                            // color: Colors.white,
                           )),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
-                        color: Colors.grey.withAlpha(50),
+                        // color: Colors.black.withAlpha(20),
+                        color: Vingo.ThemeUtil.of(context)
+                            .buttonPrimaryBoxShadowColor,
                         borderRadius: BorderRadius.only(
                           bottomLeft:
-                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                              Radius.circular(Vingo.ThemeUtil.borderRadiusHalf),
                           bottomRight:
-                              Radius.circular(Vingo.ThemeUtil.borderRadius),
+                              Radius.circular(Vingo.ThemeUtil.borderRadiusHalf),
                         ),
                       ),
                       padding: EdgeInsets.only(
@@ -534,7 +560,7 @@ class MarkdownEditingController extends TextEditingController {
                         left: Vingo.ThemeUtil.padding,
                         right: Vingo.ThemeUtil.padding,
                       ),
-                      child: Text(
+                      child: SelectableText(
                         match.group(2) ?? "",
                         style: TextStyle(
                           fontFamily: Vingo.ThemeUtil.codeFont,
@@ -635,6 +661,81 @@ class MarkdownEditingController extends TextEditingController {
     );
   }
 
+  List<InlineSpan> blockHeading({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return block(
+      context: context,
+      pattern: RegExp(
+        r"(^|\r\n|\r|\n)(#{1,6}) (.*?)($|\r\n|\r|\n)",
+        multiLine: true,
+      ),
+      matchProcess: (match, style) {
+        int heading = match.group(2)!.length - 1;
+        heading = heading > 5 ? 5 : (heading < 0 ? 0 : heading);
+        return TextSpan(
+          children: [
+            TextSpan(
+              text: match.group(1),
+            ),
+            TextSpan(
+              text:
+                  List.generate(match.group(2)!.length + 1, (i) => inv).join(),
+            ),
+            // WidgetSpan(
+            //   child: Icon(
+            //     Icons.edit,
+            //     color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //   ),
+            //   alignment: Ui.PlaceholderAlignment.aboveBaseline,
+            //   baseline: TextBaseline.alphabetic,
+            // ),
+            TextSpan(
+              children: run(
+                context: context,
+                functions: <Function>[
+                  inlineLink,
+                  inlineBoldItalicCode,
+                  inlineBoldItalic,
+                  inlineBoldCode,
+                  inlineItalicCode,
+                  inlineCode,
+                  inlineBold,
+                  inlineItalic,
+                ],
+                index: 0,
+                text: match.group(3)!,
+                style: style?.merge(
+                  TextStyle(
+                    color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+                    fontSize: Vingo.ThemeUtil.headingFontSize[heading],
+                    fontWeight: Ui.FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            // if (heading == 0 || heading == 1)
+            //   WidgetSpan(
+            //     child: Divider(
+            //       height: 1.0,
+            //     ),
+            //   ),
+            TextSpan(
+              text: match.group(4)!,
+            ),
+          ],
+          style: style,
+        );
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
   List<InlineSpan> blockList({
     required BuildContext context,
     required String text,
@@ -643,66 +744,73 @@ class MarkdownEditingController extends TextEditingController {
   }) {
     return block(
       context: context,
-      // pattern: RegExp(r"([ \t]*)(-|\d+\.)\s(\[ \]\s|\[[xX]\]\s){0,1}(.*?)(\r\n|\r|\n)"),
-      pattern: RegExp(r"([ \t]*)(-|\d+\.)\s(\[ \]\s|\[[xX]\]\s){0,1}(.*?)"),
+      pattern: RegExp(
+          r"(^|\r\n|\r|\n)([ \t]*)(-|\d+\.)\s(\[ \]\s|\[[xX]\]\s){0,1}(.*?)"),
       matchProcess: (match, style) {
-        int length = ((match.group(1) ?? "").length / 2).round();
-        bool todo = match.group(3) != null;
-        bool checked = todo ? match.group(3)!.contains(RegExp(r'[xX]')) : false;
-        bool ordered = !match.group(2)!.contains("-");
+        // int length = match.group(2)!.length;
+        bool todo = match.group(4) != null;
+        bool checked = todo ? match.group(4)!.contains(RegExp(r'[xX]')) : false;
+        bool ordered = !match.group(3)!.contains("-");
         return TextSpan(
           children: [
             TextSpan(
-              text: List.generate(length, (i) => tab).toList().join(),
+              text: match.group(1)!,
+            ),
+            TextSpan(
+              // text: List.generate(length, (i) => tab).toList().join(),
+              text: match.group(2)!,
             ),
             if (!todo && !ordered)
-              WidgetSpan(
-                child: Container(
-                  padding: EdgeInsets.only(
-                    right: 4.0,
-                  ),
-                  child: Transform.scale(
-                    scale: 1.3,
-                    child: Icon(
-                      Icons.arrow_right_rounded,
-                      color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
-                    ),
-                  ),
+              TextSpan(
+                text: "$rightArrow ",
+                style: TextStyle(
+                  color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
                 ),
               ),
+            // WidgetSpan(
+            //   child: Container(
+            //     padding: EdgeInsets.only(
+            //       right: 4.0,
+            //     ),
+            //     child: Transform.scale(
+            //       scale: 1.3,
+            //       child: Icon(
+            //         Icons.arrow_right_rounded,
+            //         color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             if (!todo && ordered)
-              WidgetSpan(
-                child: Container(
-                  padding: EdgeInsets.only(
-                    right: 4.0,
-                  ),
-                  child: Transform.scale(
-                    scale: 1.0,
-                    child: Text(
-                      match.group(2)!,
-                      style: TextStyle(
-                        color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+              TextSpan(
+                text: match.group(3)! + " ",
+                style: TextStyle(
+                  color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             if (todo)
-              WidgetSpan(
-                child: Container(
-                  padding: EdgeInsets.only(
-                    right: 4.0,
-                  ),
-                  child: Transform.scale(
-                    scale: 1.0,
-                    child: Icon(
-                      checked ? Icons.check_box : Icons.check_box_outline_blank,
-                      color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
-                    ),
-                  ),
+              TextSpan(
+                text:
+                    (checked ? boxChecked : box) + inv + inv + inv + inv + " ",
+                style: TextStyle(
+                  color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
                 ),
               ),
+            // WidgetSpan(
+            //   child: Container(
+            //     padding: EdgeInsets.only(
+            //       right: 4.0,
+            //     ),
+            //     child: Transform.scale(
+            //       scale: 1.0,
+            //       child: Icon(
+            //         checked ? Icons.check_box : Icons.check_box_outline_blank,
+            //         color: Vingo.ThemeUtil.of(context).buttonPrimaryColor,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             TextSpan(
               children: run(
                 context: context,
@@ -720,7 +828,7 @@ class MarkdownEditingController extends TextEditingController {
                   inlineItalic,
                 ],
                 index: 0,
-                text: match.group(4)!,
+                text: match.group(5)!,
                 style: style,
               ),
             ),
