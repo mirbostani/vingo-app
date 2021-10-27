@@ -15,3 +15,4 @@ export 'multiple_fab_button.dart';
 export 'platform.dart';
 export 'radio_dialog.dart';
 export 'shortcuts.dart' show Shortcuts;
+export 'widget_dialog.dart';

@@ -23,6 +23,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are you sure you want to delete \"${x}\"?";
   static pressXToCreateANewDeck(x) => "Press ${x} to create a new deck.";
   static pressXToCreateANewCard(x) => "Press ${x} to create a new card.";
+  static studyingXDeck(x) => "Studying ${x} deck";
+  static totalX(x) => "Total: ${x}";
+  static newX(x) => "New: ${x}";
+  static reviewX(x) => "Review: ${x}";
+  static learningX(x) => "Learning: ${x}";
+  static youHaveFinishedYourStudyInXMinutes(x) => "You have finished your study in ${x} minutes.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
@@ -63,10 +69,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "more": MessageLookupByLibrary.simpleMessage("More"),
+        "finished": MessageLookupByLibrary.simpleMessage("Finished"),
+        "showBack": MessageLookupByLibrary.simpleMessage("Show Back"),
+        "again": MessageLookupByLibrary.simpleMessage("Again"),
+        "hard": MessageLookupByLibrary.simpleMessage("Hard"),
+        "good": MessageLookupByLibrary.simpleMessage("Good"),
+        "easy": MessageLookupByLibrary.simpleMessage("Easy"),
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "paste": MessageLookupByLibrary.simpleMessage("Paste"),
         "deck": MessageLookupByLibrary.simpleMessage("Deck"),
+        "createDeck": MessageLookupByLibrary.simpleMessage("Create Deck"),
         "decks": MessageLookupByLibrary.simpleMessage("Decks"),
         "deckName": MessageLookupByLibrary.simpleMessage("Deck Name"),
         "card": MessageLookupByLibrary.simpleMessage("Card"),
@@ -77,25 +90,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "editCard": MessageLookupByLibrary.simpleMessage("Edit Card"),
         "cards": MessageLookupByLibrary.simpleMessage("cards"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
-        "createANewDeck":
-            MessageLookupByLibrary.simpleMessage("Create a new deck"),
-        "createANewCard":
-            MessageLookupByLibrary.simpleMessage("Create a new card"),
+        "studyModes": MessageLookupByLibrary.simpleMessage("Study Modes"),
+        "flashCard": MessageLookupByLibrary.simpleMessage("Flash Card"),
+        "notAvailable": MessageLookupByLibrary.simpleMessage("Not Available"),
+        "notAvailableToStudy": MessageLookupByLibrary.simpleMessage("No card is available to study or review for now."),
+        "youHaveFinishedYourStudyInLessThanAMinute": MessageLookupByLibrary.simpleMessage("You have finished your study in less than a minute."),
+        "youHaveFinishedYourStudyInOneMinute": MessageLookupByLibrary.simpleMessage("You have finished your study in one minute."),
+        "youHaveFinishedYourStudyInXMinutes": youHaveFinishedYourStudyInXMinutes,
         "areYouSure": MessageLookupByLibrary.simpleMessage("Are you sure?"),
         "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "pressXToCreateANewDeck": pressXToCreateANewDeck,
         "pressXToCreateANewCard": pressXToCreateANewCard,
-
-        // Shortcuts
-        "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
-        "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
-        "backShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + Esc"),
-        "createANewDeckShortcut":
-            MessageLookupByLibrary.simpleMessage("Ctrl + N"),
-        "createANewCardShortcut":
-            MessageLookupByLibrary.simpleMessage("Ctrl + N"),
-        "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
-        "studyShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + L"),
-        "saveShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + S"),
+        "studyingXDeck": studyingXDeck,
+        "totalX": totalX,
+        "newX": newX,
+        "reviewX": reviewX,
+        "learningX": learningX,
       };
 }

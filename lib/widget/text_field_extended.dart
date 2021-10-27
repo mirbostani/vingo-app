@@ -163,7 +163,7 @@ class _TextFieldExtendedState extends State<TextFieldExtended> {
                       filled: true,
                       // fillColor: Vingo.ThemeUtil.of(context).inputFillColor,
                       focusColor: Vingo.ThemeUtil.of(context).inputFocusColor,
-                      hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
+                      // hoverColor: Vingo.ThemeUtil.of(context).inputHoverColor,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(radius),
                         borderSide: BorderSide(

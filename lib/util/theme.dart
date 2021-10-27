@@ -165,6 +165,30 @@ class ThemeUtil {
   static Color darkButtonSecondaryProgressIndicatorValueColor =
       darkSecondaryAccentColor;
 
+  // Flat Button Again Colors
+  static Color lightButtonAgainColor = lightSecondaryColor;
+  static Color darkButtonAgainColor = darkSecondaryColor;
+  static Color lightButtonAgainTextColor = Colors.white;
+  static Color darkButtonAgainTextColor = Colors.white;
+
+  // Flat Button Hard Colors
+  static Color lightButtonHardColor = const Color(0xFFAA6B5C);
+  static Color darkButtonHardColor = const Color(0xFFAA6B5C);
+  static Color lightButtonHardTextColor = Colors.white;
+  static Color darkButtonHardTextColor = Colors.white;
+
+  // Flat Button Good Colors
+  static Color lightButtonGoodColor = const Color(0xFF55827A);
+  static Color darkButtonGoodColor = const Color(0xFF55827A);
+  static Color lightButtonGoodTextColor = Colors.white;
+  static Color darkButtonGoodTextColor = Colors.white;
+
+  // Flat Button Easy Colors
+  static Color lightButtonEasyColor = lightPrimaryColor;
+  static Color darkButtonEasyColor = darkPrimaryColor;
+  static Color lightButtonEasyTextColor = Colors.white;
+  static Color darkButtonEasyTextColor = Colors.white;
+
   // Flat Button Colors
   static Color lightButtonTextColor = lightTextPrimaryColor;
   static Color darkButtonTextColor = darkTextPrimaryColor;
@@ -175,7 +199,7 @@ class ThemeUtil {
   static Color lightInputCursorColor = tealColor;
   static Color darkInputCursorColor = Colors.white;
   static Color lightInputFillColor = whiteColor; // lightPrimaryColor10;
-  static Color darkInputFillColor = Colors.grey[700]!;
+  static Color darkInputFillColor = Colors.grey[800]!;
   static Color lightInputFocusColor = Colors.white;
   static Color darkInputFocusColor = Colors.grey[700]!;
   static Color lightInputHoverColor = lightPrimaryColor.withAlpha(10);
@@ -227,14 +251,14 @@ class ThemeUtil {
   static Color darkSwitchActiveColor = darkPrimaryColor;
 
   // Stats
-  static Color lightStatTotalColor = Colors.grey[700]!; // 500
+  static Color lightStatTotalColor = Colors.grey[500]!;
   static Color darkStatTotalColor = Colors.grey[400]!;
-  static Color lightStatNewColor = Colors.blue[600]!; // 200
-  static Color darkStatNewColor = Colors.lightBlue[600]!;
-  static Color lightStatReviewColor = Colors.green[400]!; // 200
-  static Color darkStatReviewColor = Colors.lightGreen;
-  static Color lightStatLearningColor = Colors.red[400]!; // 200
-  static Color darkStatLearningColor = Colors.red[600]!;
+  static Color lightStatNewColor = lightPrimaryColor; // Colors.blue[600]
+  static Color darkStatNewColor = darkPrimaryColor; // Colors.lightBlue[600]
+  static Color lightStatReviewColor = Colors.yellow[600]!; // Colors.green[400]
+  static Color darkStatReviewColor = Colors.yellow[600]!;
+  static Color lightStatLearningColor = lightSecondaryColor; // Colors.red[400]
+  static Color darkStatLearningColor = darkSecondaryColor; // Colors.red[600]
 
   // Fonts
   static String font = "Roboto";
@@ -607,6 +631,42 @@ class ThemeUtil {
         lightButtonSecondaryProgressIndicatorValueColor,
         darkButtonSecondaryProgressIndicatorValueColor,
       );
+
+  Color get buttonAgainColor => getColor(
+    lightButtonAgainColor,
+    darkButtonAgainColor,
+  );
+  Color get buttonAgainTextColor => getColor(
+    lightButtonAgainTextColor,
+    darkButtonAgainTextColor,
+  );
+
+  Color get buttonHardColor => getColor(
+    lightButtonHardColor,
+    darkButtonHardColor,
+  );
+  Color get buttonHardTextColor => getColor(
+    lightButtonHardTextColor,
+    darkButtonHardTextColor,
+  );
+
+  Color get buttonGoodColor => getColor(
+    lightButtonGoodColor,
+    darkButtonGoodColor,
+  );
+  Color get buttonGoodTextColor => getColor(
+    lightButtonGoodTextColor,
+    darkButtonGoodTextColor,
+  );
+
+  Color get buttonEasyColor => getColor(
+    lightButtonEasyColor,
+    darkButtonEasyColor,
+  );
+  Color get buttonEasyTextColor => getColor(
+    lightButtonEasyTextColor,
+    darkButtonEasyTextColor,
+  );
 
   // Input Colors
 

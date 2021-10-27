@@ -4,8 +4,9 @@ A study helper application.
 
 ## Features
 
-### v1.0.9+14
+### v1.1.0+15
 
+- Study Mode (Flash Card Mode)
 - Deck Stats
 - Markdown Editor
 - Cards List

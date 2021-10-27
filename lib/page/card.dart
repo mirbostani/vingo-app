@@ -72,15 +72,15 @@ class _CardPageState extends State<CardPage> {
       table: [
         [
           Text(Vingo.LocalizationsUtil.of(context).help),
-          Text(Vingo.LocalizationsUtil.of(context).helpShortcut),
+          Text(Vingo.Shortcuts.helpShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).back),
-          Text(Vingo.LocalizationsUtil.of(context).backShortcut),
+          Text(Vingo.Shortcuts.backShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).save),
-          Text(Vingo.LocalizationsUtil.of(context).saveShortcut),
+          Text(Vingo.Shortcuts.saveShortcut),
         ],
       ],
     );
@@ -265,7 +265,7 @@ class _CardPageState extends State<CardPage> {
                 icon: Icon(Icons.save_outlined),
                 tooltip: Vingo.LocalizationsUtil.of(context).save +
                     " (" +
-                    Vingo.LocalizationsUtil.of(context).saveShortcut +
+                    Vingo.Shortcuts.saveShortcut +
                     ")",
                 onPressed: () {
                   saveCard(context);
@@ -275,7 +275,7 @@ class _CardPageState extends State<CardPage> {
                 icon: Icon(Icons.help_outline),
                 tooltip: Vingo.LocalizationsUtil.of(context).help +
                     " (" +
-                    Vingo.LocalizationsUtil.of(context).helpShortcut +
+                    Vingo.Shortcuts.helpShortcut +
                     ")",
                 onPressed: () {
                   showHelp(context);

@@ -354,6 +354,14 @@ class LocalizationsUtil {
         "More",
         name: "more",
       );
+  String get finished => Intl.Intl.message(
+        "Finished",
+        name: "finished",
+      );
+  String get showBack => Intl.Intl.message(
+        "Show Back",
+        name: "showBack",
+      );
   String get cardFront => Intl.Intl.message(
         "Front",
         name: "cardFront",
@@ -361,6 +369,22 @@ class LocalizationsUtil {
   String get cardBack => Intl.Intl.message(
         "Back",
         name: "cardBack",
+      );
+  String get again => Intl.Intl.message(
+        "Again",
+        name: "again",
+      );
+  String get hard => Intl.Intl.message(
+        "Hard",
+        name: "hard",
+      );
+  String get good => Intl.Intl.message(
+        "Good",
+        name: "good",
+      );
+  String get easy => Intl.Intl.message(
+        "Easy",
+        name: "easy",
       );
   String get back => Intl.Intl.message(
         "Back",
@@ -377,6 +401,10 @@ class LocalizationsUtil {
   String get deck => Intl.Intl.message(
         "Deck",
         name: "deck",
+      );
+  String get createDeck => Intl.Intl.message(
+        "Create Deck",
+        name: "createDeck",
       );
   String get decks => Intl.Intl.message(
         "Decks",
@@ -410,14 +438,35 @@ class LocalizationsUtil {
         "Settings",
         name: "settings",
       );
-  String get createANewDeck => Intl.Intl.message(
-        "Create a new deck",
-        name: "createANewDeck",
+  String get studyModes => Intl.Intl.message(
+        "Study Modes",
+        name: "studyModes",
       );
-  String get createANewCard => Intl.Intl.message(
-        "Create a new card",
-        name: "createANewCard",
+  String get flashCard => Intl.Intl.message(
+        "Flash Card",
+        name: "flashCard",
       );
+  String get notAvailable => Intl.Intl.message(
+        "Not Available",
+        name: "notAvailable",
+      );
+  String get notAvailableToStudy => Intl.Intl.message(
+        "No card is available to study or review for now.",
+        name: "notAvailableToStudy",
+      );
+  String get youHaveFinishedYourStudyInLessThanAMinute => Intl.Intl.message(
+    "You have finished your study in less than a minute.",
+    name: "youHaveFinishedYourStudyInLessThanAMinute",
+  );
+  String get youHaveFinishedYourStudyInOneMinute => Intl.Intl.message(
+    "You have finished your study in one minute.",
+    name: "youHaveFinishedYourStudyInOneMinute",
+  );
+  String youHaveFinishedYourStudyInXMinutes(x) => Intl.Intl.message(
+    "You have finished your study in $x minutes.",
+    name: "youHaveFinishedYourStudyInXMinutes",
+    args: [x],
+  );
   String get areYouSure => Intl.Intl.message(
         "Are you sure?",
         name: "areYouSure",
@@ -437,40 +486,30 @@ class LocalizationsUtil {
         name: "pressXToCreateANewCard",
         args: [x],
       );
-
-  // Shortcuts
-
-  String get helpShortcut => Intl.Intl.message(
-        "F1",
-        name: "helpShortcut",
+  String studyingXDeck(String x) => Intl.Intl.message(
+        "Studying $x deck",
+        name: "studyingXDeck",
+        args: [x],
       );
-  String get closeShortcut => Intl.Intl.message(
-        "Esc",
-        name: "closeShortcut",
+  String totalX(x) => Intl.Intl.message(
+        "Total: $x",
+        name: "totalX",
+        args: [x],
       );
-  String get backShortcut => Intl.Intl.message(
-        "Ctrl + Esc",
-        name: "backShortcut",
+  String newX(x) => Intl.Intl.message(
+        "New: $x",
+        name: "newX",
+        args: [x],
       );
-  String get createANewDeckShortcut => Intl.Intl.message(
-        "Ctrl + N",
-        name: "createANewDeckShortcut",
+  String reviewX(x) => Intl.Intl.message(
+        "Review: $x",
+        name: "reviewX",
+        args: [x],
       );
-  String get createANewCardShortcut => Intl.Intl.message(
-        "Ctrl + N",
-        name: "createANewCardShortcut",
-      );
-  String get searchShortcut => Intl.Intl.message(
-        "Ctrl + F",
-        name: "searchShortcut",
-      );
-  String get studyShortcut => Intl.Intl.message(
-        "Ctrl + L",
-        name: "studyShortcut",
-      );
-  String get saveShortcut => Intl.Intl.message(
-        "Ctrl + S",
-        name: "saveShortcut",
+  String learningX(x) => Intl.Intl.message(
+        "Learning: $x",
+        name: "learningX",
+        args: [x],
       );
 }
 

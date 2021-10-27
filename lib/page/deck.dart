@@ -139,7 +139,84 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
   }
 
   Future<void> studyDeck(BuildContext context) async {
-    print("Study Deck");
+    Vingo.WidgetDialog.show(
+      context: context,
+      title: Vingo.LocalizationsUtil.of(context).studyModes,
+      children: [
+        ListTile(
+          leading: Icon(Icons.library_books_rounded),
+          title: Text(Vingo.LocalizationsUtil.of(context).flashCard),
+          onTap: () {
+            Navigator.of(context).pop();
+            onStudyFlashCard(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> onStudyFlashCard(BuildContext context) async {
+    List<String>? tags;
+    if (searchEnabled && searchController.text.isNotEmpty) {
+      tags = searchController.text.split(" ");
+    }
+    List<Vingo.Card> newCards = await Vingo.Card.selectNewCards(
+      deckId: widget.deck.id,
+      newCardsPerDay: widget.deck.newCardsPerDay,
+      newCardsOrderType:
+          Vingo.CardsOrderType.values[widget.deck.newCardsOrderId],
+      tags: tags,
+    );
+    List<Vingo.Card> learningCards = await Vingo.Card.selectLearningCards(
+      deckId: widget.deck.id!,
+      tags: tags,
+    );
+    List<Vingo.Card> reviewCards = await Vingo.Card.selectReviewCards(
+      deckId: widget.deck.id!,
+      reviewsPerDay: widget.deck.reviewsPerDay,
+      tags: tags,
+    );
+    Vingo.PlatformUtil.log("""
+    Study Flash Cards:
+      New Cards: ${newCards.length}
+      Learning Cards: ${learningCards.length}
+      Review Cards: ${reviewCards.length}
+    """);
+    int count = newCards.length + learningCards.length + reviewCards.length;
+    if (count == 0) {
+      Vingo.Dialog.show(
+        context: context,
+        title: Vingo.LocalizationsUtil.of(context).notAvailable,
+        message: Vingo.LocalizationsUtil.of(context).notAvailableToStudy,
+        declineButtonEnabled: false,
+      );
+      return;
+    }
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Vingo.FlashCardPage(
+          title: Vingo.LocalizationsUtil.of(context).studyingXDeck(
+            widget.deck.name,
+          ),
+          deck: widget.deck,
+          newCards: newCards,
+          learningCards: learningCards,
+          reviewCards: reviewCards,
+          onStart: () async {
+            // TODO; Enter full screen mode
+          },
+          onEdit: (Vingo.Card? card) {
+            // Editing started
+          },
+          onEdited: (Vingo.Card? card) {
+            // Editing finished
+          }
+        ),
+      ),
+    );
+    // await widget.deck.select();
+    await refreshCards();
   }
 
   Future<void> createCard(BuildContext context) async {
@@ -161,23 +238,23 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
       table: [
         [
           Text(Vingo.LocalizationsUtil.of(context).help),
-          Text(Vingo.LocalizationsUtil.of(context).helpShortcut),
+          Text(Vingo.Shortcuts.helpShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).back),
-          Text(Vingo.LocalizationsUtil.of(context).backShortcut),
+          Text(Vingo.Shortcuts.backShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).search),
-          Text(Vingo.LocalizationsUtil.of(context).searchShortcut),
+          Text(Vingo.Shortcuts.searchShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).study),
-          Text(Vingo.LocalizationsUtil.of(context).studyShortcut),
+          Text(Vingo.Shortcuts.studyShortcut),
         ],
         [
-          Text(Vingo.LocalizationsUtil.of(context).createANewCard),
-          Text(Vingo.LocalizationsUtil.of(context).createANewCardShortcut),
+          Text(Vingo.LocalizationsUtil.of(context).createCard),
+          Text(Vingo.Shortcuts.newShortcut),
         ],
       ],
     );
@@ -304,7 +381,7 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
           child: Container(
             child:
                 Text(Vingo.LocalizationsUtil.of(context).pressXToCreateANewCard(
-              Vingo.LocalizationsUtil.of(context).createANewCardShortcut,
+              "+",
             )),
           ),
         ),
@@ -464,7 +541,7 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
               icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
               tooltip: Vingo.LocalizationsUtil.of(context).search +
                   " (" +
-                  Vingo.LocalizationsUtil.of(context).searchShortcut +
+                  Vingo.Shortcuts.searchShortcut +
                   ")",
               onPressed: () {
                 showSearch(context);
@@ -474,7 +551,7 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
               icon: Icon(Icons.help_outline),
               tooltip: Vingo.LocalizationsUtil.of(context).help +
                   " (" +
-                  Vingo.LocalizationsUtil.of(context).helpShortcut +
+                  Vingo.Shortcuts.helpShortcut +
                   ")",
               onPressed: () {
                 showHelp(context);
@@ -486,26 +563,18 @@ class _DeckPageState extends State<DeckPage> with TickerProviderStateMixin {
           scale: fabScale,
           child: Vingo.MultipleFabButton(
             children: [
-              // Vingo.MultipleFabButtonChild(
-              //   icon: Icons.local_library,
-              //   scale: 0.85,
-              //   title: Vingo.LocalizationsUtil.of(context).study,
-              //   // tooltip: Vingo.LocalizationsUtil.of(context).study +
-              //   //     " (" +
-              //   //     Vingo.LocalizationsUtil.of(context).studyShortcut +
-              //   //     ")",
-              //   onPressed: () {
-              //     studyDeck(context);
-              //   },
-              // ),
+              Vingo.MultipleFabButtonChild(
+                icon: Icons.local_library,
+                scale: 0.85,
+                title: Vingo.LocalizationsUtil.of(context).study,
+                onPressed: () {
+                  studyDeck(context);
+                },
+              ),
               Vingo.MultipleFabButtonChild(
                 icon: Icons.add,
                 scale: 0.85,
-                title: Vingo.LocalizationsUtil.of(context).createANewCard,
-                // tooltip: Vingo.LocalizationsUtil.of(context).createANewCard +
-                //     " (" +
-                //     Vingo.LocalizationsUtil.of(context).createANewCardShortcut +
-                //     ")",
+                title: Vingo.LocalizationsUtil.of(context).createCard,
                 onPressed: () {
                   createCard(context);
                 },

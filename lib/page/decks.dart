@@ -149,15 +149,15 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
       table: [
         [
           Text(Vingo.LocalizationsUtil.of(context).help),
-          Text(Vingo.LocalizationsUtil.of(context).helpShortcut),
+          Text(Vingo.Shortcuts.helpShortcut),
         ],
         [
           Text(Vingo.LocalizationsUtil.of(context).search),
-          Text(Vingo.LocalizationsUtil.of(context).searchShortcut),
+          Text(Vingo.Shortcuts.searchShortcut),
         ],
         [
-          Text(Vingo.LocalizationsUtil.of(context).createANewDeck),
-          Text(Vingo.LocalizationsUtil.of(context).createANewDeckShortcut),
+          Text(Vingo.LocalizationsUtil.of(context).createDeck),
+          Text(Vingo.Shortcuts.newShortcut),
         ],
       ],
     );
@@ -273,7 +273,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
           child: Container(
             child:
                 Text(Vingo.LocalizationsUtil.of(context).pressXToCreateANewDeck(
-              Vingo.LocalizationsUtil.of(context).createANewDeckShortcut,
+              "+",
             )),
           ),
         ),
@@ -475,7 +475,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
               icon: searchEnabled ? Icon(Icons.search_off) : Icon(Icons.search),
               tooltip: Vingo.LocalizationsUtil.of(context).search +
                   " (" +
-                  Vingo.LocalizationsUtil.of(context).searchShortcut +
+                  Vingo.Shortcuts.searchShortcut +
                   ")",
               onPressed: () {
                 showSearch(context);
@@ -485,7 +485,7 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
               icon: Icon(Icons.help_outline),
               tooltip: Vingo.LocalizationsUtil.of(context).help +
                   " (" +
-                  Vingo.LocalizationsUtil.of(context).helpShortcut +
+                  Vingo.Shortcuts.helpShortcut +
                   ")",
               onPressed: () {
                 showHelp(context);
@@ -503,9 +503,9 @@ class _DecksPageState extends State<DecksPage> with TickerProviderStateMixin {
               color: Vingo.ThemeUtil.of(context).fabIconColor,
               size: Vingo.ThemeUtil.fabIconSize,
             ),
-            tooltip: Vingo.LocalizationsUtil.of(context).createANewDeck +
+            tooltip: Vingo.LocalizationsUtil.of(context).createDeck +
                 " (" +
-                Vingo.LocalizationsUtil.of(context).createANewDeckShortcut +
+                Vingo.Shortcuts.newShortcut +
                 ")",
             onPressed: () {
               createDeck(context);

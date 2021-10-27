@@ -12,6 +12,7 @@ class Dialog extends StatelessWidget {
   final Vingo.ButtonType? confirmButtonType;
   final String? declineText;
   final Vingo.ButtonType? declineButtonType;
+  final bool? declineButtonEnabled;
 
   const Dialog({
     Key? key,
@@ -21,6 +22,7 @@ class Dialog extends StatelessWidget {
     this.confirmButtonType,
     this.declineText,
     this.declineButtonType,
+    this.declineButtonEnabled,
   }) : super(key: key);
 
   static Future<bool?> show({
@@ -33,6 +35,7 @@ class Dialog extends StatelessWidget {
     Vingo.ButtonType? confirmButtonType,
     String? declineText,
     Vingo.ButtonType? declineButtonType,
+    bool? declineButtonEnabled = true,
   }) async {
     return await showDialog<bool?>(
         context: context,
@@ -46,6 +49,7 @@ class Dialog extends StatelessWidget {
             confirmButtonType: confirmButtonType,
             declineText: declineText,
             declineButtonType: declineButtonType,
+            declineButtonEnabled: declineButtonEnabled,
           );
         });
   }
@@ -56,7 +60,7 @@ class Dialog extends StatelessWidget {
 
   void onDecline(BuildContext context) {
     Navigator.of(context).pop();
-  }  
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,15 +117,16 @@ class Dialog extends StatelessWidget {
         bottom: 0.0,
       ),
       actions: [
-        Vingo.Button(
-          text: declineText != null
-              ? declineText!.toUpperCase()
-              : Vingo.LocalizationsUtil.of(context).cancel.toUpperCase(),
-          type: declineButtonType,
-          onPressed: () {
-            onDecline(context);
-          },
-        ),
+        if (declineButtonEnabled == true)
+          Vingo.Button(
+            text: declineText != null
+                ? declineText!.toUpperCase()
+                : Vingo.LocalizationsUtil.of(context).cancel.toUpperCase(),
+            type: declineButtonType,
+            onPressed: () {
+              onDecline(context);
+            },
+          ),
         Vingo.Button(
           text: confirmText != null
               ? confirmText!.toUpperCase()

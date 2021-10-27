@@ -7,6 +7,10 @@ enum ButtonType {
   NORMAL,
   PRIMARY,
   SECONDARY,
+  AGAIN,
+  HARD,
+  GOOD,
+  EASY,
 }
 
 class Button extends StatelessWidget {
@@ -56,9 +60,21 @@ class Button extends StatelessWidget {
               case ButtonType.SECONDARY:
                 return Vingo.ThemeUtil.of(context)
                     .buttonSecondaryProgressIndicatorBackgroundColor;
+              case ButtonType.AGAIN:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorBackgroundColor;
+              case ButtonType.HARD:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorBackgroundColor;
+              case ButtonType.GOOD:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorBackgroundColor;
+              case ButtonType.EASY:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorBackgroundColor;
             }
           }(),
-          valueColor: AlwaysStoppedAnimation<Color>(() {
+          valueColor: AlwaysStoppedAnimation<Color?>(() {
             switch (type ?? ButtonType.NORMAL) {
               case ButtonType.NORMAL:
                 return Vingo.ThemeUtil.of(context).progressIndicatorValueColor;
@@ -66,6 +82,18 @@ class Button extends StatelessWidget {
                 return Vingo.ThemeUtil.of(context)
                     .buttonPrimaryProgressIndicatorValueColor;
               case ButtonType.SECONDARY:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorValueColor;
+              case ButtonType.AGAIN:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorValueColor;
+              case ButtonType.HARD:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorValueColor;
+              case ButtonType.GOOD:
+                return Vingo.ThemeUtil.of(context)
+                    .buttonSecondaryProgressIndicatorValueColor;
+              case ButtonType.EASY:
                 return Vingo.ThemeUtil.of(context)
                     .buttonSecondaryProgressIndicatorValueColor;
             }
@@ -118,6 +146,86 @@ class Button extends StatelessWidget {
               backgroundColor: MaterialStateProperty.all(
                 Vingo.ThemeUtil.of(context).buttonSecondaryColor,
               ),
+            ),
+            onPressed: _onPressed,
+          ),
+        );
+      case ButtonType.AGAIN:
+        return Container(
+          child: TextButton(
+            child: child,
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonAgainTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonAgainColor,
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: borderRadius ?? BorderRadius.zero,
+                side: BorderSide.none,
+              )),
+            ),
+            onPressed: _onPressed,
+          ),
+        );
+      case ButtonType.HARD:
+        return Container(
+          child: TextButton(
+            child: child,
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonHardTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonHardColor,
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: borderRadius ?? BorderRadius.zero,
+                side: BorderSide.none,
+              )),
+            ),
+            onPressed: _onPressed,
+          ),
+        );
+      case ButtonType.GOOD:
+        return Container(
+          child: TextButton(
+            child: child,
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonGoodTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonGoodColor,
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: borderRadius ?? BorderRadius.zero,
+                side: BorderSide.none,
+              )),
+            ),
+            onPressed: _onPressed,
+          ),
+        );
+      case ButtonType.EASY:
+        return Container(
+          child: TextButton(
+            child: child,
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonEasyTextColor,
+              ),
+              backgroundColor: MaterialStateProperty.all(
+                Vingo.ThemeUtil.of(context).buttonEasyColor,
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                borderRadius: borderRadius ?? BorderRadius.zero,
+                side: BorderSide.none,
+              )),
             ),
             onPressed: _onPressed,
           ),

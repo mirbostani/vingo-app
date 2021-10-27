@@ -25,6 +25,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "برای ساخت یک دسته کارت جدید ${x} را فشار دهید.";
   static pressXToCreateANewCard(x) =>
       "برای ساخت یک کارت جدید ${x} را فشار دهید.";
+  static studyingXDeck(x) => "مطالعه ${x}";
+  static totalX(x) => "کل: ${x}";
+  static newX(x) => "جدید: ${x}";
+  static reviewX(x) => "مرور: ${x}";
+  static learningX(x) => "یادگیری: ${x}";
+  static youHaveFinishedYourStudyInXMinutes(x) => "شما مطالعه خود را در ${x} دقیقه به پایان رسانده اید.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static _notInlinedMessages(_) => <String, Function>{
@@ -61,10 +67,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("راهنما"),
         "close": MessageLookupByLibrary.simpleMessage("بستن"),
         "more": MessageLookupByLibrary.simpleMessage("بیشتر"),
+        "finished": MessageLookupByLibrary.simpleMessage("پایان"),
+        "showBack": MessageLookupByLibrary.simpleMessage("نمایش پشت کارت"),
+        "again": MessageLookupByLibrary.simpleMessage("مجدد"),
+        "hard": MessageLookupByLibrary.simpleMessage("سخت"),
+        "good": MessageLookupByLibrary.simpleMessage("خوب"),
+        "easy": MessageLookupByLibrary.simpleMessage("آسان"),
         "back": MessageLookupByLibrary.simpleMessage("قبل"),
         "search": MessageLookupByLibrary.simpleMessage("جستجو"),
         "paste": MessageLookupByLibrary.simpleMessage("چسباندن"),
         "deck": MessageLookupByLibrary.simpleMessage("دسته"),
+        "createDeck": MessageLookupByLibrary.simpleMessage("ساخت دسته"),
         "decks": MessageLookupByLibrary.simpleMessage("دسته ها"),
         "deckName": MessageLookupByLibrary.simpleMessage("نام دسته"),
         "card": MessageLookupByLibrary.simpleMessage("کارت"),
@@ -75,22 +88,22 @@ class MessageLookup extends MessageLookupByLibrary {
         "editCard": MessageLookupByLibrary.simpleMessage("ویرایش کارت"),
         "cards": MessageLookupByLibrary.simpleMessage("کارت ها"),
         "settings": MessageLookupByLibrary.simpleMessage("تنظیمات"),
-        "createANewDeck": MessageLookupByLibrary.simpleMessage("ساخت یک دسته کارت جدید"),
-        "createANewCard": MessageLookupByLibrary.simpleMessage("ساخت یک کارت جدید"),
+        "studyModes": MessageLookupByLibrary.simpleMessage("حالت های مطالعه"),
+        "flashCard": MessageLookupByLibrary.simpleMessage("فلش کارت"),
+        "notAvailable": MessageLookupByLibrary.simpleMessage("موجود نیست"),
+        "notAvailableToStudy": MessageLookupByLibrary.simpleMessage("هم اکنون زمان مطالعه یا مرور هیچ کارتی فرا نرسیده است."),
+        "youHaveFinishedYourStudyInLessThanAMinute": MessageLookupByLibrary.simpleMessage("شما مطالعه خود را در کمتر از یک دقیقه به اتمام رسانده اید."),
+        "youHaveFinishedYourStudyInOneMinute": MessageLookupByLibrary.simpleMessage("شما مطالعه خود را در یک دقیقه به اتمام رسانده اید."),
+        "youHaveFinishedYourStudyInXMinutes": youHaveFinishedYourStudyInXMinutes,
         "areYouSure":
             MessageLookupByLibrary.simpleMessage("آیا اطمینان دارید؟"),
         "areYouSureYouWantToDeleteX": areYouSureYouWantToDeleteX,
         "pressXToCreateANewDeck": pressXToCreateANewDeck,
         "pressXToCreateANewCard": pressXToCreateANewCard,
-        
-        // Shortcuts
-        "helpShortcut": MessageLookupByLibrary.simpleMessage("F1"),
-        "closeShortcut": MessageLookupByLibrary.simpleMessage("Esc"),
-        "backShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + Esc"),
-        "createANewDeckShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
-        "createANewCardShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + N"),
-        "searchShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + F"),
-        "studyShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + L"),
-        "saveShortcut": MessageLookupByLibrary.simpleMessage("Ctrl + S"),
+        "studyingXDeck": studyingXDeck,
+        "totalX": totalX,
+        "newX": newX,
+        "reviewX": reviewX,
+        "learningX": learningX,
       };
 }

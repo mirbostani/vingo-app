@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vingo/util/util.dart' as Vingo;
+import 'package:vingo/widget/widget.dart' as Vingo;
 
 /// Displays disposable messages using a snackbar.
 class Messenger {
@@ -65,7 +66,7 @@ class Messenger {
                   ),
                   tooltip: Vingo.LocalizationsUtil.of(buildContext).close +
                       ' (' +
-                      Vingo.LocalizationsUtil.of(buildContext).closeShortcut +
+                      Vingo.Shortcuts.closeShortcut +
                       ')',
                   onPressed: () async {
                     scaffoldMessengerState?.hideCurrentSnackBar();

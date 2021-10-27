@@ -3,12 +3,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+LogicalKeySet testKey = LogicalKeySet(
+  Io.Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control,
+  LogicalKeyboardKey.keyN,
+);
+
 class Shortcuts extends StatelessWidget {
   final Widget child;
   final bool autofocus;
   final FocusNode? focusNode;
   final VoidCallback? onConfirmDetected;
   final VoidCallback? onNewDetected;
+  final VoidCallback? onEditDetected;
   final VoidCallback? onCloseDetected;
   final VoidCallback? onHelpDetected;
   final VoidCallback? onSearchDetected;
@@ -27,6 +33,7 @@ class Shortcuts extends StatelessWidget {
     this.autofocus = false,
     this.onConfirmDetected,
     this.onNewDetected,
+    this.onEditDetected,
     this.onCloseDetected,
     this.onHelpDetected,
     this.onSearchDetected,
@@ -53,6 +60,12 @@ class Shortcuts extends StatelessWidget {
       shortcuts[NewIntent.key] = NewIntent();
       actions[NewIntent] = CallbackAction(
         onInvoke: (intent) => onNewDetected?.call(),
+      );
+    }
+    if (onEditDetected != null) {
+      shortcuts[EditIntent.key] = EditIntent();
+      actions[EditIntent] = CallbackAction(
+        onInvoke: (intent) => onEditDetected?.call(),
       );
     }
     if (onCloseDetected != null) {
@@ -124,6 +137,21 @@ class Shortcuts extends StatelessWidget {
       child: child,
     );
   }
+
+  //----------------------------------------------------------------------------
+
+  static String _prepareKeyLabel(LogicalKeySet key) {
+    return key.keys.map((k) => k.keyLabel).join(' + ');
+  }
+
+  static String helpShortcut = _prepareKeyLabel(HelpIntent.key);
+  static String closeShortcut = _prepareKeyLabel(CloseIntent.key);
+  static String backShortcut = _prepareKeyLabel(BackIntent.key);
+  static String newShortcut = _prepareKeyLabel(NewIntent.key);
+  static String editShortcut = _prepareKeyLabel(EditIntent.key);
+  static String searchShortcut = _prepareKeyLabel(SearchIntent.key);
+  static String studyShortcut = _prepareKeyLabel(StudyIntent.key);
+  static String saveShortcut = _prepareKeyLabel(SaveIntent.key);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +167,13 @@ class NewIntent extends Intent {
   static LogicalKeySet key = LogicalKeySet(
     Io.Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control,
     LogicalKeyboardKey.keyN,
+  );
+}
+
+class EditIntent extends Intent {
+  static LogicalKeySet key = LogicalKeySet(
+    Io.Platform.isMacOS ? LogicalKeyboardKey.meta : LogicalKeyboardKey.control,
+    LogicalKeyboardKey.keyE,
   );
 }
 
