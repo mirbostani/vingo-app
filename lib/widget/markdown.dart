@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:katex_flutter/katex_flutter.dart' as Tex;
 import 'package:vingo/util/util.dart' as Vingo;
 import 'package:vingo/widget/widget.dart' as Vingo;
 
@@ -179,6 +180,7 @@ class MarkdownEditingController extends TextEditingController {
       context: context,
       functions: <Function>[
         blockCode,
+        blockTex,
         blockImage,
         blockHeading,
         blockList,
@@ -188,6 +190,7 @@ class MarkdownEditingController extends TextEditingController {
         inlineBoldCode,
         inlineItalicCode,
         inlineCode,
+        inlineTex,
         inlineBold,
         inlineItalic,
       ],
@@ -324,6 +327,35 @@ class MarkdownEditingController extends TextEditingController {
               fontStyle: Ui.FontStyle.italic,
             ),
           ),
+        );
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
+  static List<InlineSpan> inlineTex({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return inline(
+      context: context,
+      pattern: RegExp(r"\$([^\$\n]*?)\$"),
+      matchProcess: (match, style) {
+        return TextSpan(
+          children: [
+            WidgetSpan(
+              child: Tex.KaTeX(
+                laTeXCode: Text("\$${match.group(1)!}\$"),
+                delimiter: r"$",
+                displayDelimiter: r"$$",
+              ),
+              alignment: Ui.PlaceholderAlignment.middle,
+            ),
+          ],
         );
       },
       text: text,
@@ -528,6 +560,39 @@ class MarkdownEditingController extends TextEditingController {
 
   //----------------------------------------------------------------------------
 
+  static List<InlineSpan> blockTex({
+    required BuildContext context,
+    required String text,
+    TextStyle? style,
+    ProcessCallback? process,
+  }) {
+    return block(
+      context: context,
+      pattern: RegExp(
+        r"(^|\r\n|\r|\n)\$\$(\r\n|\r|\n)([^\$]*?)(\r\n|\r|\n)\$\$($|\r\n|\r|\n)",
+        multiLine: true,
+      ),
+      matchProcess: (match, style) {
+        return TextSpan(children: [
+          // TextSpan(text: match.group(1)!),
+          WidgetSpan(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Tex.KaTeX(
+                laTeXCode: Text("\$\$${match.group(3)!}\$\$"),
+                delimiter: r"$",
+                displayDelimiter: r"$$",
+              ),
+            ),
+          ),
+        ]);
+      },
+      text: text,
+      style: style,
+      process: process,
+    );
+  }
+
   static List<InlineSpan> blockCode({
     required BuildContext context,
     required String text,
@@ -599,10 +664,24 @@ class MarkdownEditingController extends TextEditingController {
                         left: Vingo.ThemeUtil.padding,
                         right: Vingo.ThemeUtil.padding,
                       ),
-                      child: SelectableText(
-                        match.group(2) ?? "",
-                        style: TextStyle(
-                          fontFamily: Vingo.ThemeUtil.codeFont,
+                      child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                            PointerDeviceKind.stylus,
+                          },
+                        ),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Text(
+                            // SelectableText(
+                            match.group(2) ?? "",
+                            style: TextStyle(
+                              fontFamily: Vingo.ThemeUtil.codeFont,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -734,6 +813,7 @@ class MarkdownEditingController extends TextEditingController {
                   inlineBoldCode,
                   inlineItalicCode,
                   inlineCode,
+                  inlineTex,
                   inlineBold,
                   inlineItalic,
                 ],
@@ -841,6 +921,7 @@ class MarkdownEditingController extends TextEditingController {
                 context: context,
                 functions: <Function>[
                   blockCode,
+                  blockTex,
                   blockImage,
                   blockList,
                   inlineLink,
@@ -849,6 +930,7 @@ class MarkdownEditingController extends TextEditingController {
                   inlineBoldCode,
                   inlineItalicCode,
                   inlineCode,
+                  inlineTex,
                   inlineBold,
                   inlineItalic,
                 ],

@@ -4,8 +4,9 @@ A study helper application.
 
 ## Features
 
-### v1.1.0+15
+### v1.2.0+16
 
+- LaTeX Support
 - Study Mode (Flash Card Mode)
 - Deck Stats
 - Markdown Editor
@@ -35,6 +36,12 @@ Flutter 2.6.0-6.0.pre.210 • channel master • https://github.com/flutter/flut
 Framework • revision 69ae50310b (41 minutes ago) • 2021-09-24 15:30:09 -0700
 Engine • revision dcffd551cb
 Tools • Dart 2.15.0 (build 2.15.0-144.0.dev)
+```
+
+## Build
+
+```shell
+$ flutter run -d linux --release --no-sound-null-safety
 ```
 
 ## Add Linux Support
